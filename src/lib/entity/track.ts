@@ -1,11 +1,11 @@
-import type { AudioType } from "../types/audio-type";
+import type { MediaType } from "../types/media-type";
+import type { MediaFile } from "./media-file";
 
 export interface Track {
-    id: string;
+    id: number;
     name: string;
     author: string;
     album?: string;
-    audio: Blob;
-    audioType: AudioType;
+    audio: MediaFile<MediaType>;
     duration: number;
 }
