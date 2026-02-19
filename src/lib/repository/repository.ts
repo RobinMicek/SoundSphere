@@ -1,28 +1,59 @@
 import type { Writable } from "svelte/store";
+import { DATABASE_NAME, DATABASE_VERSION } from "../constants";
 
-abstract class Repository<T> {
+export abstract class Repository<T> {
+    protected dbPromise: Promise<IDBDatabase>;
+
+    constructor() {
+        this.dbPromise = this.openDB();
+    }
+
     /** 
      * Returns reactive store with all entites (this store gets updated as entites change)
      */
-    abstract getAll(): Writable<T>;
+    abstract getAll(): Promise<Writable<T[]>>;
 
     /**
      * Retrieves entity
      */
-    abstract get(id: number): T;
+    abstract get(id: number): Promise<T>;
 
     /**
      * Saves new entity
      */
-    abstract save(entity: T): T;
+    abstract save(entity: Omit<T, "id">): Promise<T>;
 
     /**
      * Updated existing entity
      */
-    abstract update(id: number, entity: T): T;
+    abstract update(id: number, entity: T): Promise<T>;
 
     /**
      * Deletes existing entity
      */
-    abstract delete(id: number): T;
+    abstract delete(id: number): Promise<void>;
+
+    /**
+     * Creates new database connection
+     */
+    openDB(): Promise<IDBDatabase> {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
+
+            request.onsuccess = () =>resolve(request.result);
+            request.onerror = () => reject(request.error);
+
+            request.onupgradeneeded = (event) => {
+                const db = (event.target as IDBOpenDBRequest).result;
+
+                const tables = ["playlists", "tracks", "media_files"]
+
+                tables.forEach(table => {
+                    if (!db.objectStoreNames.contains(table)) {
+                        db.createObjectStore(table, { keyPath: "id", autoIncrement: true });
+                    }    
+                });        
+            }
+        });
+    }
 }
