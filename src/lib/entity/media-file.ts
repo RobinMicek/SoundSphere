@@ -1,5 +1,5 @@
-export interface MediaFile<T> {
+export interface MediaFile<MediaType> {
     id: number;
     blob: Blob;
-    type: T;
+    type: MediaType;
 }

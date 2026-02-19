@@ -6,6 +6,6 @@ export interface Track {
     name: string;
     author: string;
     album?: string;
-    audio: MediaFile<MediaType>;
+    audio: MediaFile<MediaType.MP3>;
     duration: number;
 }

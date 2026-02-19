@@ -4,7 +4,7 @@ import type { MediaFile } from "./media-file";
 export interface Playlist {
     id: number;
     name: string;
-    cover: MediaFile<MediaType>;
+    cover: MediaFile<MediaType.SVG>;
     description: string;
     trackIds: Set<number>;
 }
