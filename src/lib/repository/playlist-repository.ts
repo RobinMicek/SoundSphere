@@ -1,17 +1,17 @@
 import { writable, type Writable } from "svelte/store";
-import type { Track } from "../entity/track";
 import { Repository } from "./repository";
+import type { Playlist } from "../entity/playlist";
 
-export class TrackRepository extends Repository<Track> {
-    private readonly objectStoreName = "tracks";
+export class PlaylistRepository extends Repository<Playlist> {
+    private readonly objectStoreName = "playlists";
     
-    private readonly reactiveStore = writable<Track[]>([]);
+    private readonly reactiveStore = writable<Playlist[]>([]);
 
     constructor() {
         super();
     }
     
-    async getAll(): Promise<Writable<Track[]>> {
+    async getAll(): Promise<Writable<Playlist[]>> {
         const db = await this.dbPromise;
 
         return new Promise((resolve, reject) => {
@@ -20,7 +20,7 @@ export class TrackRepository extends Repository<Track> {
             const request = store.getAll();
 
             request.onsuccess = () => {
-                this.reactiveStore.set(request.result as Track[]);
+                this.reactiveStore.set(request.result as Playlist[]);
                 resolve(this.reactiveStore);
             }
 
@@ -28,7 +28,7 @@ export class TrackRepository extends Repository<Track> {
         });
     }
 
-    async get(id: number): Promise<Track> {
+    async get(id: number): Promise<Playlist> {
         const db = await this.dbPromise;
 
         return new Promise((resolve, reject) => {
@@ -37,16 +37,15 @@ export class TrackRepository extends Repository<Track> {
             const request = store.get(id);
 
             request.onsuccess = () => {
-                this.reactiveStore.update(arr => [...arr.filter(track => track.id !== request.result.id), request.result as Track])
-                resolve(request.result as Track);
+                this.reactiveStore.update(arr => [...arr.filter(playlist => playlist.id !== id, request.result as Playlist)]);
+                resolve(request.result as Playlist);
             }
 
             request.onerror = () => reject(request.error);
         });
-
     }
 
-    async save(entity: Omit<Track, "id">): Promise<Track> {
+    async save(entity: Omit<Playlist, "id">): Promise<Playlist> {
         const db = await this.dbPromise;
 
         return new Promise((resolve, reject) => {
@@ -55,7 +54,7 @@ export class TrackRepository extends Repository<Track> {
             const request = store.add(entity);
 
             request.onsuccess = () => {
-                const savedEntity: Track = { ...entity, id: request.result as number };
+                const savedEntity: Playlist = {...entity, id: request.result as number};
                 
                 this.reactiveStore.update(arr => [...arr, savedEntity]);
                 resolve(savedEntity);
@@ -63,25 +62,24 @@ export class TrackRepository extends Repository<Track> {
 
             request.onerror = () => reject(request.error);
         });
-
     }
 
-    async update(id: number, entity: Track): Promise<Track> {
+    async update(id: number, entity: Playlist): Promise<Playlist> {
         const db = await this.dbPromise;
 
         return new Promise((resolve, reject) => {
             const transaction = db.transaction(this.objectStoreName, "readwrite");
             const store = transaction.objectStore(this.objectStoreName);
-
-            // Dont believe the id that is set on the entity itself
+            
+            // Dont trust provided id on entity
             entity.id = id;
 
             const request = store.put(entity);
 
             request.onsuccess = () => {
-                const savedEntity: Track = { ...entity, id: request.result as number };
+                const savedEntity: Playlist = {...entity, id: request.result as number};
 
-                this.reactiveStore.update(arr => [...arr.filter(track => track.id !== id), savedEntity]);
+                this.reactiveStore.update(arr => [...arr.filter(playlist => playlist.id !== id), savedEntity]);
                 resolve(savedEntity);
             }
 
@@ -98,7 +96,7 @@ export class TrackRepository extends Repository<Track> {
             const request = store.delete(id);
 
             request.onsuccess = () => {
-                this.reactiveStore.update(arr => arr.filter(track => track.id !== id));
+                this.reactiveStore.update(arr => [...arr.filter(playlist => playlist.id !== id)]);
                 resolve();
             }
 
