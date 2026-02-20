@@ -8,6 +8,6 @@
   	</main>
 
   	<footer>
-    	My Footer
+    	<h1>Footer</h1>
   	</footer>
 </div>
