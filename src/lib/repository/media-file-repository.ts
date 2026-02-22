@@ -1,4 +1,3 @@
-import { writable, type Writable } from "svelte/store";
 import { Repository } from "./repository";
 import type { MediaFile } from "../entity/media-file";
 import type { MediaType } from "../types/media-type";
