@@ -3,5 +3,5 @@ export interface Playlist {
     name: string;
     coverMediaFileId: number;
     description: string;
-    trackIds: Set<number>;
+    trackIds: number[];
 }
