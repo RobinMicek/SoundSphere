@@ -43,11 +43,25 @@ export class PlaylistServiceImpl implements PlaylistService {
     async delete(id: number): Promise<void> {
         return this.playlistRepository.delete(id);
     }
-    
+
     async getAllTracks(id: number): Promise<Track[]> {
         const playlist: Playlist = await this.playlistRepository.get(id);
 
         return this.trackRepository.getMany(playlist.trackIds);
+    }
+
+    async addTrack(id: number, trackId: number): Promise<Playlist> {
+        const playlist: Playlist = await this.playlistRepository.get(id);
+        playlist.trackIds = [...playlist.trackIds.filter(t => t !== trackId), trackId];
+
+        return await this.playlistRepository.update(id, playlist);
+    }
+
+    async deleteTrack(id: number, trackId: number): Promise<Playlist> {
+        const playlist: Playlist = await this.playlistRepository.get(id);
+        playlist.trackIds = [...playlist.trackIds.filter(t => t !== trackId)];
+
+        return await this.playlistRepository.update(id, playlist);
     }
     
     async getCoverArtBlob(id: number): Promise<Blob> {
