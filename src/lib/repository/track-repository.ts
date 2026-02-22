@@ -5,13 +5,11 @@ import { Repository } from "./repository";
 export class TrackRepository extends Repository<Track> {
     private readonly objectStoreName = "tracks";
     
-    private readonly reactiveStore = writable<Track[]>([]);
-
     constructor() {
         super();
     }
     
-    async getAll(): Promise<Writable<Track[]>> {
+    async getAll(): Promise<Track[]> {
         const db = await this.dbPromise;
 
         return new Promise((resolve, reject) => {
@@ -20,8 +18,7 @@ export class TrackRepository extends Repository<Track> {
             const request = store.getAll();
 
             request.onsuccess = () => {
-                this.reactiveStore.set(request.result as Track[]);
-                resolve(this.reactiveStore);
+                resolve(request.result as Track[]);
             }
 
             request.onerror = () => reject(request.error);
@@ -37,7 +34,6 @@ export class TrackRepository extends Repository<Track> {
             const request = store.get(id);
 
             request.onsuccess = () => {
-                this.reactiveStore.update(arr => [...arr.filter(track => track.id !== request.result.id), request.result as Track])
                 resolve(request.result as Track);
             }
 
@@ -56,8 +52,6 @@ export class TrackRepository extends Repository<Track> {
 
             request.onsuccess = () => {
                 const savedEntity: Track = { ...entity, id: request.result as number };
-                
-                this.reactiveStore.update(arr => [...arr, savedEntity]);
                 resolve(savedEntity);
             }
 
@@ -80,8 +74,6 @@ export class TrackRepository extends Repository<Track> {
 
             request.onsuccess = () => {
                 const savedEntity: Track = { ...entity, id: request.result as number };
-
-                this.reactiveStore.update(arr => [...arr.filter(track => track.id !== id), savedEntity]);
                 resolve(savedEntity);
             }
 
@@ -98,7 +90,6 @@ export class TrackRepository extends Repository<Track> {
             const request = store.delete(id);
 
             request.onsuccess = () => {
-                this.reactiveStore.update(arr => arr.filter(track => track.id !== id));
                 resolve();
             }
 

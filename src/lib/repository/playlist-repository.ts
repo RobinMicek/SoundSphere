@@ -5,13 +5,11 @@ import type { Playlist } from "../entity/playlist";
 export class PlaylistRepository extends Repository<Playlist> {
     private readonly objectStoreName = "playlists";
     
-    private readonly reactiveStore = writable<Playlist[]>([]);
-
     constructor() {
         super();
     }
     
-    async getAll(): Promise<Writable<Playlist[]>> {
+    async getAll(): Promise<Playlist[]> {
         const db = await this.dbPromise;
 
         return new Promise((resolve, reject) => {
@@ -20,8 +18,7 @@ export class PlaylistRepository extends Repository<Playlist> {
             const request = store.getAll();
 
             request.onsuccess = () => {
-                this.reactiveStore.set(request.result as Playlist[]);
-                resolve(this.reactiveStore);
+                resolve(request.result as Playlist[]);
             }
 
             request.onerror = () => reject(request.error);
@@ -37,7 +34,6 @@ export class PlaylistRepository extends Repository<Playlist> {
             const request = store.get(id);
 
             request.onsuccess = () => {
-                this.reactiveStore.update(arr => [...arr.filter(playlist => playlist.id !== id), request.result as Playlist]);
                 resolve(request.result as Playlist);
             }
 
@@ -54,9 +50,7 @@ export class PlaylistRepository extends Repository<Playlist> {
             const request = store.add(entity);
 
             request.onsuccess = () => {
-                const savedEntity: Playlist = {...entity, id: request.result as number};
-                
-                this.reactiveStore.update(arr => [...arr, savedEntity]);
+                const savedEntity: Playlist = {...entity, id: request.result as number};                
                 resolve(savedEntity);
             }
 
@@ -78,8 +72,6 @@ export class PlaylistRepository extends Repository<Playlist> {
 
             request.onsuccess = () => {
                 const savedEntity: Playlist = {...entity, id: request.result as number};
-
-                this.reactiveStore.update(arr => [...arr.filter(playlist => playlist.id !== id), savedEntity]);
                 resolve(savedEntity);
             }
 
@@ -96,7 +88,6 @@ export class PlaylistRepository extends Repository<Playlist> {
             const request = store.delete(id);
 
             request.onsuccess = () => {
-                this.reactiveStore.update(arr => [...arr.filter(playlist => playlist.id !== id)]);
                 resolve();
             }
 

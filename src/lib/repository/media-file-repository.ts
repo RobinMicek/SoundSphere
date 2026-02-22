@@ -6,13 +6,11 @@ import type { MediaType } from "../types/media-type";
 export class MediaFileRepository extends Repository<MediaFile<MediaType>> {
     private readonly objectStoreName = "media_files";
     
-    private readonly reactiveStore = writable<MediaFile<MediaType>[]>([]);
-
     constructor() {
         super();
     }
     
-    async getAll(): Promise<Writable<MediaFile<MediaType>[]>> {
+    async getAll(): Promise<MediaFile<MediaType>[]> {
         const db = await this.dbPromise;
 
         return new Promise((resolve, reject) => {
@@ -21,8 +19,7 @@ export class MediaFileRepository extends Repository<MediaFile<MediaType>> {
             const request = store.getAll();
 
             request.onsuccess = () => {
-                this.reactiveStore.set(request.result as MediaFile<MediaType>[]);
-                resolve(this.reactiveStore);
+                resolve(request.result as MediaFile<MediaType>[]);
             }
 
             request.onerror = () => reject(request.error);
@@ -38,7 +35,6 @@ export class MediaFileRepository extends Repository<MediaFile<MediaType>> {
             const request = store.get(id);
 
             request.onsuccess = () => {
-                this.reactiveStore.update(arr => [...arr.filter(mediaFile => mediaFile.id !== id), request.result as MediaFile<MediaType>]);
                 resolve(request.result as MediaFile<MediaType>);
             }
 
@@ -56,8 +52,6 @@ export class MediaFileRepository extends Repository<MediaFile<MediaType>> {
 
             request.onsuccess = () => {
                 const savedEntity: MediaFile<MediaType> = {...entity, id: request.result as number};
-                
-                this.reactiveStore.update(arr => [...arr, savedEntity]);
                 resolve(savedEntity);
             }
 
@@ -79,8 +73,6 @@ export class MediaFileRepository extends Repository<MediaFile<MediaType>> {
 
             request.onsuccess = () => {
                 const savedEntity: MediaFile<MediaType> = {...entity, id: request.result as number};
-
-                this.reactiveStore.update(arr => [...arr.filter(mediaFile => mediaFile.id !== id), savedEntity]);
                 resolve(savedEntity);
             }
 
@@ -97,7 +89,6 @@ export class MediaFileRepository extends Repository<MediaFile<MediaType>> {
             const request = store.delete(id);
 
             request.onsuccess = () => {
-                this.reactiveStore.update(arr => [...arr.filter(mediaFile => mediaFile.id !== id)]);
                 resolve();
             }
 

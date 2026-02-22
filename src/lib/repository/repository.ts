@@ -9,9 +9,9 @@ export abstract class Repository<T> {
     }
 
     /** 
-     * Returns reactive store with all entites (this store gets updated as entites change)
+     * Retrieves all entities
      */
-    abstract getAll(): Promise<Writable<T[]>>;
+    abstract getAll(): Promise<T[]>;
 
     /**
      * Retrieves entity
