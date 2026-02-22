@@ -4,7 +4,7 @@ import type { Track } from "../entity/track";
 export interface PlaylistService {
 
     /**
-     * Returns reactive store of all playlists
+     * Retrieves all playlists
      */
     getAll(): Promise<Playlist[]>
 
