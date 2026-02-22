@@ -4,7 +4,6 @@ import type { Repository } from "../repository/repository";
 import { MediaType } from "../types/media-type";
 import type { MP3Metadata } from "../types/mp3-metadata";
 import type { TrackService } from "./track-service";
-import * as mm from 'music-metadata-browser';
 
 export class TrackServiceImpl implements TrackService {
 
@@ -25,9 +24,8 @@ export class TrackServiceImpl implements TrackService {
     }
 
     async create(audioFile: File): Promise<Track> {
-    
         // Extract information from file
-        const metadata = await this.readMedatadaFromMP3File(audioFile);
+        const metadata = await this.readMetadataFromMP3File(audioFile);
 
         if (!metadata.duration) throw new Error("Could not parse duration from uploaded file");
 
@@ -47,7 +45,7 @@ export class TrackServiceImpl implements TrackService {
         };
 
         const { id } = await this.mediaFileRepository.save(audioFileEntity);
-        
+
         // Save track
         entity.audioMediaFileId = id;
         return this.trackRepository.save(entity);
@@ -70,10 +68,14 @@ export class TrackServiceImpl implements TrackService {
         return audio.blob;
     }
 
-    private async readMedatadaFromMP3File(file: File): Promise<MP3Metadata> {
-        const metadata = await mm.parseBlob(file);
-
-        return {...metadata.common as MP3Metadata, duration: metadata.format.duration};
+    private async readMetadataFromMP3File(file: File): Promise<MP3Metadata> {
+        // TODO: Implement this
+        return {
+            title: "unknown",
+            artist: "unknown",
+            album: "unknown",
+            duration: 360
+        }
     }
 
 }
