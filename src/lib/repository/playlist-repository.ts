@@ -1,4 +1,3 @@
-import { writable, type Writable } from "svelte/store";
 import { Repository } from "./repository";
 import type { Playlist } from "../entity/playlist";
 
@@ -23,6 +22,24 @@ export class PlaylistRepository extends Repository<Playlist> {
 
             request.onerror = () => reject(request.error);
         });
+    }
+
+    async getMany(ids: number[]): Promise<Playlist[]> {
+        const db = await this.dbPromise;
+
+        const tx = db.transaction(this.objectStoreName, "readonly");
+        const store = tx.objectStore(this.objectStoreName);
+
+        const promises = ids.map(id =>
+            new Promise<Playlist | undefined>((resolve, reject) => {
+                const request = store.get(id);
+                request.onsuccess = () => resolve(request.result as Playlist);
+                request.onerror = () => reject(request.error);
+            })
+        );
+
+        const results = await Promise.all(promises);
+        return results.filter(Boolean) as Playlist[];
     }
 
     async get(id: number): Promise<Playlist> {

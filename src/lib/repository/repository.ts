@@ -14,6 +14,11 @@ export abstract class Repository<T> {
     abstract getAll(): Promise<T[]>;
 
     /**
+     * Returns subset of all entities filtered by their ids
+     */
+    abstract getMany(ids: number[]): Promise<T[]>
+
+    /**
      * Retrieves entity
      */
     abstract get(id: number): Promise<T>;

@@ -25,6 +25,24 @@ export class TrackRepository extends Repository<Track> {
         });
     }
 
+    async getMany(ids: number[]): Promise<Track[]> {
+        const db = await this.dbPromise;
+    
+        const tx = db.transaction(this.objectStoreName, "readonly");
+        const store = tx.objectStore(this.objectStoreName);
+
+        const promises = ids.map(id =>
+            new Promise<Track | undefined>((resolve, reject) => {
+                const request = store.get(id);
+                request.onsuccess = () => resolve(request.result as Track);
+                request.onerror = () => reject(request.error);
+            })
+        );
+
+        const results = await Promise.all(promises);
+        return results.filter(Boolean) as Track[];
+    }
+
     async get(id: number): Promise<Track> {
         const db = await this.dbPromise;
 
