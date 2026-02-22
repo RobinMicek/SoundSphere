@@ -50,13 +50,13 @@ export class PlaylistServiceImpl implements PlaylistService {
         return this.trackRepository.getMany(playlist.trackIds);
     }
     
-    async getCoverArtUrl(id: number): Promise<string | null> {
+    async getCoverArtBlob(id: number): Promise<Blob> {
         const playlist: Playlist = await this.playlistRepository.get(id);
         const coverArt: MediaFile<MediaType> = await this.mediaFileRepository.get(playlist.coverMediaFileId);
 
-        if (coverArt.type !== MediaType.SVG) return null;
+        if (coverArt.type !== MediaType.SVG) throw new Error(`Cover art for playlist ${id} is not SVG`);
 
-        return URL.createObjectURL(coverArt.blob);
+        return coverArt.blob;
     }
 
 }

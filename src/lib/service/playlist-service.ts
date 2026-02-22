@@ -36,6 +36,6 @@ export interface PlaylistService {
     /**
      * Returns cover art url (can be directly pasted into img tag)
      */
-    getCoverArtUrl(id: number): Promise<string | null>
+    getCoverArtBlob(id: number): Promise<Blob>
 
 }
