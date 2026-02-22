@@ -5,4 +5,5 @@ export interface Track {
     album?: string;
     audioMediaFileId: number;
     duration: number;
+    addedAt: Date;
 }
