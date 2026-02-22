@@ -102,7 +102,8 @@
                 name: "Return of Mouse Diva",
                 author: "The Hellp",
                 duration: 3600,
-                audioMediaFileId: 123
+                audioMediaFileId: 123,
+                addedAt: new Date()
             })
         } catch(e) {
             alert(e);
