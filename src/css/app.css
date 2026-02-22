@@ -1,5 +1,10 @@
+@import "./colors.css";
+
 @import "./layout.css";
+@import "./header.css";
 
 body {
     font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--PRIMARY_COLOR);
+    color: var(--TEXT_COLOR);
 }

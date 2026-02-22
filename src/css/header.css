@@ -1,0 +1,22 @@
+header {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--SECONDARY_COLOR);
+}
+
+header #logo {
+    width: 10vw;
+    margin: 0;
+}
+
+header nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+header nav a {
+    color: var(--ACCENT_COLOR);
+}
