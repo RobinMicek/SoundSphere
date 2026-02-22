@@ -37,7 +37,7 @@ export class PlaylistRepository extends Repository<Playlist> {
             const request = store.get(id);
 
             request.onsuccess = () => {
-                this.reactiveStore.update(arr => [...arr.filter(playlist => playlist.id !== id, request.result as Playlist)]);
+                this.reactiveStore.update(arr => [...arr.filter(playlist => playlist.id !== id), request.result as Playlist]);
                 resolve(request.result as Playlist);
             }
 
