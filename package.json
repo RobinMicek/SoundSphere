@@ -19,6 +19,6 @@
     "vite": "^7.3.1"
   },
   "dependencies": {
-    "@roxi/routify": "^3.6.4"
+    "sv-router": "^0.14.0"
   }
 }

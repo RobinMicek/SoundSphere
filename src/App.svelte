@@ -1,6 +1,6 @@
-<script>
-  import { Router } from "@roxi/routify";
-  import routes from "../.routify/routes.default";
+<script lang="ts">
+	import { Router } from "sv-router";
+	import "sv-router/generated"
 </script>
 
-<Router routes={routes}  />
+<Router />

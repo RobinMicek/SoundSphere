@@ -1,7 +1,16 @@
 {
+  "compilerOptions": {
+    "paths": {
+      "$lib/*": ["./src/lib/*"]
+    }
+  },
+
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
+    { "path": "./tsconfig.node.json" }    
+  ],
+  "extends": [
+    "./.router/tsconfig.json"
   ]
 }
