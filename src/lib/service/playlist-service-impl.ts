@@ -1,10 +1,10 @@
 import type { PlaylistService } from "./playlist-service";
-import type { Writable } from "svelte/store";
 import type { Playlist } from "../entity/playlist";
 import type { Track } from "../entity/track";
 import { MediaType } from "../types/media-type";
 import type { Repository } from "../repository/repository";
 import type { MediaFile } from "../entity/media-file";
+import { generatePolynomialdHash } from "../util/seed";
 
 export class PlaylistServiceImpl implements PlaylistService {
     
@@ -27,10 +27,16 @@ export class PlaylistServiceImpl implements PlaylistService {
     }
 
     async create(entity: Omit<Playlist, "id">): Promise<Playlist> {
+        const coverArtSeed: number = generatePolynomialdHash(entity.name);
+        // TODO: Create and save covert art
+
         return this.playlistRepository.save(entity);
     }
     
     async update(id: number, entity: Playlist): Promise<Playlist> {
+        const coverArtSeed: number = generatePolynomialdHash(entity.name);
+        // TODO: Remove old, create and save covert art
+
         return this.playlistRepository.update(id, entity);
     }
     
@@ -52,5 +58,5 @@ export class PlaylistServiceImpl implements PlaylistService {
 
         return URL.createObjectURL(coverArt.blob);
     }
-    
+
 }
