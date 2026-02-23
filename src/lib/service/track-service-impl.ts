@@ -1,9 +1,9 @@
-import type { MediaFile } from "../entity/media-file";
-import type { Track } from "../entity/track";
-import type { Repository } from "../repository/repository";
-import { MediaType } from "../types/media-type";
-import type { MP3Metadata } from "../types/mp3-metadata";
-import type { TrackService } from "./track-service";
+import type {MediaFile} from "../entity/media-file";
+import type {Track} from "../entity/track";
+import type {Repository} from "../repository/repository";
+import {MediaType} from "../types/media-type";
+import type {TrackService} from "./track-service";
+
 
 export class TrackServiceImpl implements TrackService {
 
@@ -25,16 +25,16 @@ export class TrackServiceImpl implements TrackService {
 
     async create(audioFile: File): Promise<Track> {
         // Extract information from file
-        const metadata = await this.readMetadataFromMP3File(audioFile);
+        const duration: number = await this.readMP3Duration(audioFile);
 
-        if (!metadata.duration) throw new Error("Could not parse duration from uploaded file");
+        if (!duration) throw new Error("Could not parse duration from uploaded file");
 
         const entity: Omit<Track, "id"> = {
-            name: metadata.title ?? "Unnamed track",
-            author: metadata.artist ?? "Unknown",
-            album: metadata.album ?? undefined,
+            name: audioFile.name ?? "Unnamed track",
+            author: "Unknown",
+            album: undefined,
             audioMediaFileId: -1,
-            duration: metadata.duration,
+            duration: duration,
             addedAt: new Date()
         }
 
@@ -68,14 +68,23 @@ export class TrackServiceImpl implements TrackService {
         return audio.blob;
     }
 
-    private async readMetadataFromMP3File(file: File): Promise<MP3Metadata> {
-        // TODO: Implement this
-        return {
-            title: "unknown",
-            artist: "unknown",
-            album: "unknown",
-            duration: 360
-        }
+    private async readMP3Duration(file: File): Promise<number> {
+        return new Promise((resolve, reject) => {
+            const audioElement: HTMLAudioElement = document.createElement("audio");
+            const url: string = URL.createObjectURL(file);
+
+            audioElement.src = url;
+
+            audioElement.addEventListener("loadedmetadata", () => {
+                resolve(audioElement.duration);
+                URL.revokeObjectURL(url);
+            });
+
+            audioElement.addEventListener("error", (err) => {
+                reject(err);
+                URL.revokeObjectURL(url);
+            });
+        });
     }
 
 }

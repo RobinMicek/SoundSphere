@@ -19,7 +19,6 @@
     "vite": "^7.3.1"
   },
   "dependencies": {
-    "music-metadata-browser": "^2.5.11",
     "sv-router": "^0.14.0"
   }
 }
