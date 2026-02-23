@@ -1,10 +1,16 @@
-import type { PlaylistService } from "./playlist-service";
-import type { Playlist } from "../entity/playlist";
-import type { Track } from "../entity/track";
-import { MediaType } from "../types/media-type";
-import type { Repository } from "../repository/repository";
-import type { MediaFile } from "../entity/media-file";
-import { generatePolynomialdHash } from "../util/seed";
+import type {PlaylistService} from "./playlist-service";
+import type {Playlist} from "../entity/playlist";
+import type {Track} from "../entity/track";
+import {MediaType} from "../types/media-type";
+import type {Repository} from "../repository/repository";
+import type {MediaFile} from "../entity/media-file";
+import {generatePolynomialdHash} from "../util/seed";
+import {createSVGColoredGrid, generatePerlinGrid, perlinToColorRGB} from "$lib/util/perlin";
+import {
+    PLAYLIST_COVER_ART_PERLIN_SCALE,
+    PLAYLIST_COVER_ART_PERLIN_SIZE,
+    PLAYLIST_COVER_ART_SVG_CELL_SIZE
+} from "$lib/constants";
 
 export class PlaylistServiceImpl implements PlaylistService {
     
@@ -27,15 +33,24 @@ export class PlaylistServiceImpl implements PlaylistService {
     }
 
     async create(entity: Omit<Playlist, "id">): Promise<Playlist> {
-        const coverArtSeed: number = generatePolynomialdHash(entity.name);
-        // TODO: Create and save covert art
+        // Generate cover art
+        const coverArtSvg: string = this.createCoverArt(entity.name);
+
+        // Save cover art and update cover art id on entity
+        entity.coverMediaFileId = await this.saveCoverArt(coverArtSvg);
 
         return this.playlistRepository.save(entity);
     }
     
     async update(id: number, entity: Playlist): Promise<Playlist> {
-        const coverArtSeed: number = generatePolynomialdHash(entity.name);
-        // TODO: Remove old, create and save covert art
+        // Remove old cover art
+        await this.mediaFileRepository.delete(entity.coverMediaFileId);
+
+        // Generate cover art
+        const coverArtSvg: string = this.createCoverArt(entity.name);
+
+        // Save cover art and update cover art id on entity
+        entity.coverMediaFileId = await this.saveCoverArt(coverArtSvg);
 
         return this.playlistRepository.update(id, entity);
     }
@@ -71,6 +86,28 @@ export class PlaylistServiceImpl implements PlaylistService {
         if (coverArt.type !== MediaType.SVG) throw new Error(`Cover art for playlist ${id} is not SVG`);
 
         return coverArt.blob;
+    }
+
+    /**
+     * Generates new perlin noise svg using playlist name as seed and returns svg string
+     */
+    private createCoverArt(playlistName: string) {
+        const seed = generatePolynomialdHash(playlistName);
+        const perlinGrid: number[][] = generatePerlinGrid(PLAYLIST_COVER_ART_PERLIN_SIZE, PLAYLIST_COVER_ART_PERLIN_SIZE, seed, PLAYLIST_COVER_ART_PERLIN_SCALE);
+
+        return createSVGColoredGrid(perlinGrid, perlinToColorRGB, PLAYLIST_COVER_ART_SVG_CELL_SIZE)
+    }
+
+    /**
+     * Saves cover art as media file and returns id
+     */
+    private async saveCoverArt(svgString: string): Promise<number> {
+        const { id } = await this.mediaFileRepository.save({
+            blob: new Blob([svgString], { type: "image/svg+xml;charset=utf-8" }),
+            type: MediaType.SVG
+        });
+
+        return id;
     }
 
 }

@@ -22,19 +22,24 @@ export function generatePerlinGrid(width: number, height: number, seed: number =
 
 /**
  * Maps numbers between -1 and 1 to values 0 - 255
- * @author Mapping algorithm by ChatGPT
+ * @author ChatGPT
  */
 export function perlinToColorRGB(value: number): [number, number, number] {
-    value = Math.max(-1, Math.min(1, value)); // Clamp to [-1, 1]
+    value = Math.max(-1, Math.min(1, value));
+    const t = (value + 1) / 2; // normalize 0-1
 
-    const t = (value + 1) / 2; // Normalize to 0-1
+    // Red ramps up quickly, then slowly saturates
+    const r = Math.round(Math.min(255, Math.max(0, Math.pow(t, 0.3) * 255)));
 
-    const r = Math.round(Math.sin(t * Math.PI) * 255);        // red rises then falls
-    const g = Math.round(Math.sin((t + 1/3) * 2 * Math.PI) * 255); // phase-shifted green
-    const b = Math.round(Math.sin((t + 2/3) * 2 * Math.PI) * 255); // phase-shifted blue
+    // Green has a bell curve peak in the middle
+    const g = Math.round(Math.min(255, Math.max(0, Math.exp(-Math.pow((t - 0.5) * 5, 2)) * 255)));
 
+    // Blue drops sharply at first, then slowly fades
+    const b = Math.round(Math.min(255, Math.max(0, (1 - Math.pow(t, 2)) * 255)));
+    
     return [r, g, b];
 }
+
 
 /**
  * Creates SVG grid with colored cells determined by color function
