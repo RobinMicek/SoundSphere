@@ -56,6 +56,11 @@ export class PlaylistServiceImpl implements PlaylistService {
     }
     
     async delete(id: number): Promise<void> {
+        const entity: Playlist = await this.playlistRepository.get(id);
+
+        // Delete cover art blob
+        await this.mediaFileRepository.delete(entity.coverMediaFileId);
+
         return this.playlistRepository.delete(id);
     }
 

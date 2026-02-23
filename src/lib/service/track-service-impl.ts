@@ -56,6 +56,11 @@ export class TrackServiceImpl implements TrackService {
     }
 
     async delete(id: number): Promise<void> {
+        const entity: Track = await this.trackRepository.get(id);
+
+        // Delete audio blob
+        await this.mediaFileRepository.delete(entity.audioMediaFileId);
+
         return this.trackRepository.delete(id);
     }
 
