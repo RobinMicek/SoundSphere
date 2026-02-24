@@ -1,5 +1,5 @@
-import { createNoise2D } from 'simplex-noise';
-import {mulberry32 } from "$lib/util/mulberry";
+import {createNoise2D} from 'simplex-noise';
+import {mulberry32} from "$lib/util/mulberry";
 import {SVG_NAMESPACE} from "$lib/constants";
 
 /**
@@ -25,18 +25,13 @@ export function generatePerlinGrid(width: number, height: number, seed: number =
  * @author ChatGPT
  */
 export function perlinToColorRGB(value: number): [number, number, number] {
-    value = Math.max(-1, Math.min(1, value));
-    const t = (value + 1) / 2; // normalize 0-1
+    // Clamp value to [-1, 1] and normalize to [0, 1]
+    const t = Math.max(0, Math.min(1, (value + 1) / 2));
 
-    // Red ramps up quickly, then slowly saturates
-    const r = Math.round(Math.min(255, Math.max(0, Math.pow(t, 0.3) * 255)));
+    const r = Math.round(Math.min(255, Math.sin(t * Math.PI) * 255));
+    const g = Math.round(Math.min(255, Math.sin((t + 0.33) * Math.PI) * 255));
+    const b = Math.round(Math.min(255, Math.sin((t + 0.66) * Math.PI) * 255));
 
-    // Green has a bell curve peak in the middle
-    const g = Math.round(Math.min(255, Math.max(0, Math.exp(-Math.pow((t - 0.5) * 5, 2)) * 255)));
-
-    // Blue drops sharply at first, then slowly fades
-    const b = Math.round(Math.min(255, Math.max(0, (1 - Math.pow(t, 2)) * 255)));
-    
     return [r, g, b];
 }
 
