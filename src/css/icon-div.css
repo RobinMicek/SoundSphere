@@ -1,0 +1,5 @@
+div .icon {
+    display: flex;
+    justify-items: center;
+    gap: 1rem;
+}

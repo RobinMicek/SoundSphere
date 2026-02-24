@@ -1,7 +1,17 @@
 @import "./colors.css";
 
 @import "./layout.css";
+@import "./icon-div.css";
+
 @import "./header.css";
+
+@import "playlist-grid.css";
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
 
 body {
     font-family: Arial, Helvetica, sans-serif;

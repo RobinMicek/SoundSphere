@@ -48,4 +48,10 @@ export interface PlaylistService {
      */
     getCoverArtBlob(id: number): Promise<Blob>
 
+
+    /**
+     * Returns number of tracks in playlist
+     */
+    getTrackCount(id: number): Promise<number>
+
 }

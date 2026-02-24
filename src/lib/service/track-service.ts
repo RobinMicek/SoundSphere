@@ -31,4 +31,5 @@ export interface TrackService {
      * Returns audio blob for given track
      */
     getAudioBlob(id: number): Promise<Blob>
+
 }

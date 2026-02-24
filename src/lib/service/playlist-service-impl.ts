@@ -93,6 +93,13 @@ export class PlaylistServiceImpl implements PlaylistService {
         return coverArt.blob;
     }
 
+
+    async getTrackCount(id: number) {
+        const playlist: Playlist = await this.playlistRepository.get(id);
+
+        return playlist.trackIds.length;
+    }
+
     /**
      * Generates new perlin noise svg using playlist name as seed and returns svg string
      */
