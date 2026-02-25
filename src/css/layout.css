@@ -20,4 +20,6 @@ header, footer {
 main {
     flex: 1;
     overflow: auto;
+
+    padding: 1rem;
 }

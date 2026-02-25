@@ -1,6 +1,9 @@
 @import "./colors.css";
 
 @import "./layout.css";
+@import "./button.css";
+@import "./input.css";
+@import "./modal.css";
 @import "./icon-div.css";
 
 @import "./header.css";

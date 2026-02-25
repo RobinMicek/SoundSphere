@@ -1,7 +1,8 @@
 :root {
     --PRIMARY_COLOR: rgb(19, 14, 14);
-    --SECONDARY_COLOR: rgb(32, 25, 23);
+    --SECONDARY_COLOR: rgb(51, 51, 51);
     --ACCENT_COLOR: rgb(73, 151, 31);
+    --DESTRUCTIVE_COLOR: rgb(243, 2, 2);
     --TEXT_COLOR: rgb(255, 255, 255);
     --SHADOW_COLOR: rgb(30, 28, 28);
 }

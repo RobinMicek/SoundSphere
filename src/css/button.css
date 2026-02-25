@@ -1,0 +1,48 @@
+button.btn {
+    all: unset;
+
+    padding: 0.8rem 1rem;
+
+    border-radius: 0.5rem;
+
+    font-size: 1.2rem;
+    font-weight: bold;
+
+    box-sizing: border-box;
+
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &:hover:not(.full-size) {
+        transform: translateY(-0.1rem);
+    }
+
+    &.full-size {
+        width: 100%;
+
+        transition: padding-left 0.2s ease;
+    }
+
+    &.full-size:hover {
+        padding-left: 2rem
+    }
+
+    &.primary {
+        background-color: var(--PRIMARY_COLOR);
+    }
+
+    &.secondary {
+        background-color: var(--SECONDARY_COLOR);
+    }
+
+    &.destructive {
+        background-color: var(--DESTRUCTIVE_COLOR);
+    }
+
+    &.accent {
+        background-color: var(--ACCENT_COLOR);
+    }
+}
