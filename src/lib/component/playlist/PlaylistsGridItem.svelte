@@ -5,7 +5,7 @@
     let { playlist, coverArtPromise, numberOfTracksPromise, onClick }: { playlist: Playlist, coverArtPromise: Promise<Blob>, numberOfTracksPromise: Promise<number>, onClick: () => Promise<void>;} = $props();
 </script>
 
-<div class="playlist-item">
+<div class="playlist-grid-item">
 
     <button onclick={onClick} type="button">
         {#await coverArtPromise}
@@ -21,7 +21,6 @@
         {:catch err}
             <img src="/placeholder-playlist-cover-art.svg" alt="Playlist cover art placeholder">
         {/await}
-
     </button>
 
     <h2>{playlist.name}</h2>

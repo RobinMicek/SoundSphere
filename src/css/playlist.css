@@ -1,0 +1,98 @@
+div.playlist {
+    margin: 2% 5% 2% 5%;
+    padding: 2%;
+
+    background-color: var(--SECONDARY_COLOR);
+
+    border-radius: 1rem;
+
+    box-shadow: 0.5rem 0.5rem 1rem var(--SHADOW_COLOR);
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2rem;
+
+    .header {
+        display: flex;
+        justify-content: start;
+
+        gap: 2rem;
+
+        img {
+            width: 15%;
+            aspect-ratio: 1 / 1;
+
+            border-radius: 1rem;
+            object-fit: cover;
+
+            box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.2);
+        }
+
+        .info {
+            max-width: 80%;
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+
+            h2 {
+                margin: 0;
+
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: var(--TEXT_COLOR);
+            }
+
+            p {
+                max-width: 100%; /* Needs to be set, otherwise the stupid ellipsis does not work - for when description is one large string without any white spaces */
+
+                margin: 0.3rem 0 0;
+
+                font-size: 1rem;
+
+                text-overflow: ellipsis;
+                white-space: wrap;
+                overflow: hidden;
+            }
+        }
+    }
+}
+
+table.tracks-list {
+    width: 100%;
+    padding: 1rem;
+
+    background-color: var(--PRIMARY_COLOR);
+
+    border: solid 0.2rem var(--SHADOW_COLOR);
+    border-radius: 1rem;
+
+    tr {
+        border: solid 1rem green;
+    }
+
+    td {
+        font-size: 1.5rem;
+        margin: 10px;
+        padding: 1rem;
+        border: none;
+
+        button {
+            cursor: pointer;
+
+            background: transparent;
+            border: none;
+
+            color: var(--TEXT_COLOR);
+
+            &:hover {
+                color: var(--ACCENT_COLOR)
+            }
+        }
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: var(--PRIMARY_COLOR);
+    }
+}

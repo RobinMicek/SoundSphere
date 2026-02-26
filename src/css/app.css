@@ -11,6 +11,7 @@
 @import "./header.css";
 
 @import "playlist-grid.css";
+@import "playlist.css";
 
 *,
 *::before,
