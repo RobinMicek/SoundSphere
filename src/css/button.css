@@ -16,6 +16,10 @@ button.btn {
         cursor: pointer;
     }
 
+    &:disabled {
+        cursor: not-allowed;
+    }
+
     &:hover:not(.full-size) {
         transform: translateY(-0.1rem);
     }
