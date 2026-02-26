@@ -50,3 +50,23 @@ button.btn {
         background-color: var(--ACCENT_COLOR);
     }
 }
+
+div.button-group {
+    width: 100%;
+
+    padding: 1rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 1rem;
+
+    &.left {
+        justify-content: start;
+    }
+
+    &.right {
+        justify-content: end;
+    }
+}

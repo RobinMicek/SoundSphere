@@ -1,0 +1,15 @@
+p {
+    &.centered {
+        width: 100%;
+
+        text-align: center;
+    }
+
+    &.note {
+        font-size: 2rem;
+    }
+
+    &.bold {
+        font-weight: bold;
+    }
+}
