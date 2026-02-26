@@ -1,5 +1,5 @@
 .modal-container {
-    z-index: 999;
+    z-index: 1;
     height: 100vh;
     width: 100vw;
 
@@ -19,6 +19,7 @@
         max-height: calc(100vh - 1rem);
 
         border-radius: 1rem;
+        border: solid 0.2rem var(--SHADOW_COLOR);
 
         box-shadow: 0.1rem 0.1rem 0.8rem var(--SHADOW_COLOR);
 
@@ -57,6 +58,4 @@
 
         }
     }
-
-
 }
