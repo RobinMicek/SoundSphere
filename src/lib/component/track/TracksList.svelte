@@ -33,12 +33,12 @@
                 <td>{track.album ?? "Unknown"}</td>
                 <td>{secondsToString(track.duration)}</td>
                 <td>
-                    <button onclick={onClickTrackEdit(track.id)}>
+                    <button onclick={() => onClickTrackEdit(track.id)}>
                         <Edit />
                     </button>
                 </td>
                 <td>
-                    <button onclick={onClickTrackDelete(track.id)}>
+                    <button onclick={() => onClickTrackDelete(track.id)}>
                         <Trash />
                     </button>
                 </td>
