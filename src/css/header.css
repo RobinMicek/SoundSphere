@@ -4,6 +4,8 @@ header {
     justify-content: space-between;
     background-color: var(--SECONDARY_COLOR);
 
+    border-bottom: solid 0.2rem var(--SHADOW_COLOR);
+
     img {
         width: 10vw;
         margin: 0;
