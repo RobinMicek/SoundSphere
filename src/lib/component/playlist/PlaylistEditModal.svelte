@@ -33,42 +33,37 @@
         </div>
 
         <div class="modal-content">
+            <form onsubmit={(event) => {event.preventDefault(); onSubmit(playlistData)}}>
+                <Input
+                    name="Name"
+                    type="text"
+                    required={true}
+                    placeholder="My awesome playlist"
+                    bind:value={playlistData.name}
+                    Icon={FolderPen}
+                    onValueChange={(event) => {}}
+                />
 
-            {#if isLoading}
-                <p>Loading...</p>
-            {:else}
-                <form onsubmit={(event) => {event.preventDefault(); onSubmit(playlistData)}}>
-                    <Input
-                        name="Name"
-                        type="text"
-                        required={true}
-                        placeholder="My awesome playlist"
-                        bind:value={playlistData.name}
-                        Icon={FolderPen}
-                        onValueChange={(event) => {}}
-                    />
+                <Input
+                    name="Description"
+                    type="text"
+                    required={true}
+                    isTextArea={true}
+                    placeholder="This is my awesome playlist"
+                    bind:value={playlistData.description}
+                    Icon={TextAlignStart}
+                    onValueChange={(event) => {}}
+                />
 
-                    <Input
-                        name="Description"
-                        type="text"
-                        required={true}
-                        isTextArea={true}
-                        placeholder="This is my awesome playlist"
-                        bind:value={playlistData.description}
-                        Icon={TextAlignStart}
-                        onValueChange={(event) => {}}
-                    />
-
-                    <Button
-                        text="Save"
-                        type="accent"
-                        disabled={isLoading}
-                        fullSize={true}
-                        Icon={Save}
-                        onClick={() => {onSubmit(playlistData)}}
-                    />
-                </form>
-            {/if}
+                <Button
+                    text="Save"
+                    type="accent"
+                    disabled={isLoading}
+                    fullSize={true}
+                    Icon={Save}
+                    onClick={() => {onSubmit(playlistData)}}
+                />
+            </form>
         </div>
 
 

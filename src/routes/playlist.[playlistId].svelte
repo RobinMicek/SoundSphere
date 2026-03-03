@@ -5,48 +5,146 @@
     import type {PlaylistService} from "$lib/service/playlist-service";
     import type {TrackService} from "$lib/service/track-service";
     import type {Track} from "$lib/entity/track";
-    import {route} from 'sv-router/generated';
+    import {navigate, route} from 'sv-router/generated';
+    import type {Playlist} from "$lib/entity/playlist";
+    import PlaylistDetail from "$lib/component/playlist/PlaylistDetail.svelte";
+    import Button from "$lib/component/form/Button.svelte";
+    import {CornerUpLeft} from "@lucide/svelte";
+    import PlaylistEditModal from "$lib/component/playlist/PlaylistEditModal.svelte";
+    import {triggerAlert} from "$lib/store/alert-store";
+    import TrackEditModal from "$lib/component/track/TrackEditModal.svelte";
 
     const playlistService = getContext<PlaylistService>(PLAYLIST_SERVICE_CONTEXT);
     const trackService = getContext<TrackService>(TRACK_SERVICE_CONTEXT);
 
+    let isEditPlaylistModalOpened: boolean = false;
+    let isEditPlaylistModalLoading: boolean = false;
+
+    let currentlyEditedTrackId: number = -1; // This is set by function that opens edit modal and is used to select initial track data from the tracks array
+    let isEditTrackModalOpened: boolean = false;
+    let isEditTrackModalLoading: boolean = false;
+
     const params = route.getParams(`/playlist/:playlistId`);
     const playlistId = Number(params.playlistId);
 
+    let playlist: Playlist;
     let tracks: Writable<Track[]> = writable([]);
+
+    async function loadPlaylist(id: number) {
+        playlistService.get(id)
+            .then(p => playlist = p)
+            .catch(e => triggerAlert("Failed to load playlist data", e.message, "error"))
+    }
+
+    async function deletePlaylist(id: number) {
+        playlistService.delete(id)
+            .then(() => {
+                triggerAlert("Playlist successfully deleted", "", "success")
+                navigate("/")
+            })
+            .catch(e => triggerAlert("Failed to delete playlist", e.message, "error"))
+    }
+
+    async function editPlaylist(id: number, playlistData: Playlist): Promise<void> {
+        playlistService.update(id, playlistData)
+            .then(p => playlist = p)
+            .catch(e => triggerAlert("Failed to update playlist", e.message, "error"))
+    }
 
     async function loadTracks(playlistId: number): Promise<void> {
         playlistService.getAllTracks(playlistId)
             .then(arr => tracks.set(arr))
-            .catch(alert);
+            .catch(e => triggerAlert("Failed to load tracks", e.message, "error"))
     }
 
-    async function handleFileChange(event): Promise<void> {
-        await addNewTrack(event.target.files[0]);
+    async function addNewTracks(playlistId: number, files: File[]): Promise<void> {
+        files.forEach(file => {
+            trackService.create(file)
+                .then((savedTrack: Track) => {
+                    playlistService.addTrack(playlistId, savedTrack.id);
+                    tracks.update(arr => [...arr, savedTrack]);
+                })
+                .catch(e => triggerAlert("Failed to add new tracks", e.message , "error"));
+        });
     }
 
-    async function addNewTrack(file: File): Promise<void> {
-        trackService.create(file)
-            .then((savedTrack: Track) => {
-                playlistService.addTrack(playlistId, savedTrack.id);
-                tracks.update(arr => [...arr, savedTrack]);
+    async function deleteTrack(playlistId: number, trackId: number) {
+        trackService.delete(trackId)
+            .then(() => {
+                playlist.trackIds = [...playlist.trackIds.filter(arr => arr.id != trackId)];
+                playlistService.update(playlistId, playlist);
+
+                tracks.update(arr => [...arr.filter(track => track.id !== trackId)]);
+
+                triggerAlert("Track successfully deleted", "", "success");
             })
-            .catch(console.error);
+            .catch(e => triggerAlert("Failed to delete track", e.message, "error"));
+    }
+
+    async function editTrack(trackId: number, trackData: Track) {
+        trackService.update(trackId, trackData)
+            .then(updatedTrack =>
+                tracks.update(tracks =>
+                    [...tracks.filter(arr => arr.id !== trackId), updatedTrack]
+                )
+            )
+            .catch(e => triggerAlert("Failed to update track data", e.message, "error"))
     }
 
     onMount(() => {
+        loadPlaylist(playlistId);
         loadTracks(playlistId);
     });
 </script>
 
-<h1>Playlists #{playlistId}</h1>
+{#if isEditPlaylistModalOpened}
+    <PlaylistEditModal
+        modalText="Edit playlist"
+        initialPlaylistData={playlist}
+        bind:isLoading={isEditPlaylistModalLoading}
+        onClose={() => {isEditPlaylistModalOpened = false}}
+        onSubmit={(playlistData) => {
+            isEditPlaylistModalOpened = true;
+            editPlaylist(playlist.id, playlistData)
+                .then(() => isEditPlaylistModalOpened = false)
+                .finally(() => isEditPlaylistModalLoading = false)
+        }}
+    />
+{/if}
 
-<input type="file" accept=".mp3" onchange={handleFileChange} >
+{#if isEditTrackModalOpened}
+    <TrackEditModal
+        modalText="Edit track"
+        initialTrackData={$tracks.filter(arr => arr.id === currentlyEditedTrackId)[0]}
+        bind:isLoading={isEditTrackModalLoading}
+        onClose={() => {isEditTrackModalOpened = false}}
+        onSubmit={(trackData) => {
+            isEditTrackModalOpened = true;
+            editTrack(currentlyEditedTrackId,  trackData)
+                .then(() => isEditTrackModalOpened = false)
+                .finally(() => isEditTrackModalLoading = false)
 
-{#each $tracks as track}
-    <p>
-        Name: {track.name}
-        | Author: {track.author}
-        | Duration: {track.duration}
-    </p>
-{/each}
+        }}
+    />
+{/if}
+
+
+<Button
+    text="All playlists"
+    type="secondary"
+    Icon={CornerUpLeft}
+    onClick={() => navigate("/")}
+/>
+
+{#if playlist}
+    <PlaylistDetail
+        playlist={playlist}
+        coverArtPromise={playlistService.getCoverArtBlob(playlist.id)}
+        tracks={tracks}
+        onClickEdit={() => isEditPlaylistModalOpened = true}
+        onClickDelete={() => deletePlaylist(playlist.id)}
+        onUploadNewTracks={(files) => addNewTracks(playlist.id, files)}
+        onClickTrackDelete={(trackId) => deleteTrack(playlist.id, trackId)}
+        onClickTrackEdit={(trackId) => {currentlyEditedTrackId = trackId; isEditTrackModalOpened = true;}}
+    />
+{/if}

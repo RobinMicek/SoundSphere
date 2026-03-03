@@ -1,7 +1,8 @@
 <script lang="ts">
     import {SquarePen, Trash} from "@lucide/svelte";
     import Button from "$lib/component/form/Button.svelte";
-    import TracksList from "$lib/component/playlist/TracksList.svelte";
+    import TracksList from "$lib/component/track/TracksList.svelte";
+    import PlaylistTrackUpload from "$lib/component/playlist/PlaylistTrackUpload.svelte";
 
     export let playlist: Playlist;
     export let coverArtPromise: () => Promise<Blob>;
@@ -9,8 +10,9 @@
     export let onClickEdit: () => Promise<void>;
     export let onClickDelete: () => Promise<void>;
     export let onClickTrackEdit: (trackId: number) => Promise<void>;
-    export let onClickTrackPlay: (playlistId: number, trackId: number) => Promise<void>;
-    export let onClickTrackDelete: (playlistId: number, trackId: number) => Promise<void>;
+    export let onClickTrackPlay: (trackId: number) => Promise<void>;
+    export let onClickTrackDelete: (trackId: number) => Promise<void>;
+    export let onUploadNewTracks: (files: File[]) => Promise<void>;
 </script>
 
 <div class="playlist">
@@ -25,7 +27,7 @@
             {:catch err}
                 <img src="/placeholder-playlist-cover-art.svg" alt="Playlist cover art placeholder">
             {/await}
-        {:catch err}y
+        {:catch err}
             <img src="/placeholder-playlist-cover-art.svg" alt="Playlist cover art placeholder">
         {/await}
 
@@ -56,13 +58,13 @@
         <TracksList
             tracks={tracks}
             onClickTrackEdit={onClickTrackEdit}
-            onClickTrackPlay={(trackId) => onClickTrackPlay(playlist.id, trackId)}
-            onClickTrackDelete={(trackId) => onClickTrackDelete(playlist.id, trackId)}
+            onClickTrackPlay={onClickTrackPlay}
+            onClickTrackDelete={onClickTrackDelete}
         />
-    {:else}
-        <p class="note centered bold">
-            There are no tracks in this playlist! <br><br> Add Some.
-        </p>
     {/if}
+
+    <PlaylistTrackUpload
+        onUpload={onUploadNewTracks}
+    />
 
 </div>

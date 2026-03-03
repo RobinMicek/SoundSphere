@@ -1,18 +1,18 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-	import { PLAYLIST_SERVICE_CONTEXT, TRACK_SERVICE_CONTEXT } from "../lib/context"
-	import { setContext } from 'svelte';
-    import type { MediaFile } from "../lib/entity/media-file";
-    import type { Playlist } from "../lib/entity/playlist";
-    import type { Track } from "../lib/entity/track";
-    import { MediaFileRepository } from "../lib/repository/media-file-repository";
-    import { PlaylistRepository } from "../lib/repository/playlist-repository";
-    import type { Repository } from "../lib/repository/repository";
-    import { TrackRepository } from "../lib/repository/track-repository";
-    import type { PlaylistService } from "../lib/service/playlist-service";
-    import { PlaylistServiceImpl } from "../lib/service/playlist-service-impl";
-    import type { MediaType } from "../lib/types/media-type";
+	import {setContext} from 'svelte';
+	import {PLAYLIST_SERVICE_CONTEXT, TRACK_SERVICE_CONTEXT} from "$lib/context";
+	import type {MediaFile} from "$lib/entity/media-file";
+	import type {Playlist} from "$lib/entity/playlist";
+	import type {Track} from "$lib/entity/track";
+	import {MediaFileRepository} from "$lib/repository/media-file-repository";
+	import {PlaylistRepository} from "$lib/repository/playlist-repository";
+	import type {Repository} from "$lib/repository/repository";
+	import {TrackRepository} from "$lib/repository/track-repository";
+	import type {PlaylistService} from "$lib/service/playlist-service";
+	import {PlaylistServiceImpl} from "$lib/service/playlist-service-impl";
+	import type {MediaType} from "$lib/types/media-type";
 	import {TrackServiceImpl} from "$lib/service/track-service-impl";
+	import Alerts from "$lib/component/alert/Alerts.svelte";
 
 	// Repositories
 	const playlistRepository: Repository<Playlist> = new PlaylistRepository();
@@ -32,15 +32,15 @@
 
 <div class="main-layout">
   	<header>
-    	<img id="logo" src="/logo.png" alt="Logo">
+		<div></div>
 
-		<nav>
-			<a href="">Button</a>
-			<p>Text</p>
-		</nav>
+    	<img src="/logo.png" alt="Logo">
+
+		<nav></nav>
   	</header>
 
   	<main>
+		<Alerts />
 	    {@render children()}
   	</main>
 

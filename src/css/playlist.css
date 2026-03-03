@@ -96,3 +96,112 @@ table.tracks-list {
         background-color: var(--PRIMARY_COLOR);
     }
 }
+
+div.track-upload {
+    padding: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+
+    gap: 1rem;
+
+    border: solid 0.2rem var(--SHADOW_COLOR);
+    background-color: var(--PRIMARY_COLOR);
+
+    border-radius: 1rem;
+
+    ul {
+        li {
+            padding: 0.2rem 0 0.2rem 0 ;
+        }
+    }
+
+    .dropzone {
+        cursor: pointer;
+
+        padding: 2rem;
+        border: dashed 0.2rem var(--TEXT_COLOR);
+        border-radius: 0.5rem;
+    }
+
+    .dragging {
+        background: var(--SECONDARY_COLOR);
+    }
+}
+
+@media (max-width: 768px) {
+    div.playlist {
+        margin: 1rem;
+        padding: 1rem;
+        gap: 1.5rem;
+
+        .header {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+
+            img {
+                width: 50%;
+                max-width: 200px;
+            }
+
+            .info {
+                max-width: 100%;
+                align-items: center;
+
+                h2 {
+                    font-size: 1.4rem;
+                }
+
+                p {
+                    font-size: 0.9rem;
+                }
+            }
+        }
+    }
+
+    table.tracks-list {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        font-size: 0.9rem;
+
+        td {
+            font-size: 1rem;
+            padding: 0.75rem;
+        }
+    }
+
+    div.track-upload {
+        padding: 0.75rem;
+        gap: 0.75rem;
+
+        .dropzone {
+            padding: 1.2rem;
+            font-size: 0.9rem;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    div.playlist {
+        margin: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    div.playlist .header img {
+        width: 70%;
+    }
+
+    div.playlist .header .info h2 {
+        font-size: 1.2rem;
+    }
+
+    table.tracks-list td {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+    }
+}
