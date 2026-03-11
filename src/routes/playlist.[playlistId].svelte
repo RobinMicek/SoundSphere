@@ -37,12 +37,17 @@
     }
 
     async function deletePlaylist(id: number) {
-        playlistService.delete(id)
+        playlistService.get(id)
+            // Delete all tracks in playlist
+            .then(playlist =>
+                Promise.all(playlist.trackIds.map(trackId => trackService.delete(trackId)))
+            )
+            .then(() => playlistService.delete(id))
             .then(() => {
-                triggerAlert("Playlist successfully deleted", "", "success")
-                navigate("/")
+                triggerAlert("Playlist successfully deleted", "", "success");
+                navigate("/");
             })
-            .catch(e => triggerAlert("Failed to delete playlist", e.message, "error"))
+            .catch(e => triggerAlert("Failed to delete playlist", e.message, "error"));
     }
 
     async function editPlaylist(id: number, playlistData: Playlist): Promise<void> {
