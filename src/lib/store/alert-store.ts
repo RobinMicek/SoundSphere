@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { ALERT_TIMEOUT_MS } from "$lib/constants";
+import { ALERT_TIMEOUT_MS } from "../constants";
 
 export type AlertType = 'success' | 'error' | 'info';
 
