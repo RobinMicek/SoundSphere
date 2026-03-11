@@ -25,7 +25,7 @@
         {#each $tracks as track}
             <tr>
                 <td>
-                    <button onclick={onClickTrackPlay(track.id)}>
+                    <button onclick={() => onClickTrackPlay(track.id)}>
                         <Play />
                     </button>
                 </td>
