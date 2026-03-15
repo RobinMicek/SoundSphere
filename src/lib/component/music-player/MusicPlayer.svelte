@@ -22,6 +22,7 @@
     let volume: number = $state(1);
     let isMuted: boolean = $state(false);
     let progress: number = $state(0);
+    let playlistCoverImageBlobPromise: () => Promise<Blob>;
     // ↑ These are just for reactivity, we dont touch these directly, they are updated via listeners
 
     let isFullscreenPlayerOpened: boolean = $state(false);
@@ -152,8 +153,21 @@
     {#if isFullscreenPlayerOpened}
 
         <FullscreenMusicPlayer
-            isFullScreenPlayerOpened={isFullscreenPlayerOpened}
+            playlistCoverImageBlobPromise={playlistService.getCoverArtBlob($currentlyPlayingTrackStore.playlistId)}
+            currentTrack={currentTrack}
+            progress={progress}
+            isPlaying={isPlaying}
+            volume={volume}
+            isMuted={isMuted}
+            isFullscreenPlayerOpened={isFullscreenPlayerOpened}
+
+            handleTogglePlay={handleTogglePlay}
+            handlePlayPreviousTrack={handlePlayPreviousTrack}
+            handlePlayNextTrack={handlePlayNextTrack}
+            handleChangeVolume={handleChangeVolume}
+            handleMute={handleMute}
             handleToggleFullscreenPlayer={handleToggleFullscreenPlayer}
+            handleProgressChange={handleProgressChange}
         />
 
     {:else}
