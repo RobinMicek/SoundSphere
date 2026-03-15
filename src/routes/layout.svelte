@@ -1,6 +1,6 @@
 <script lang="ts">
-	import {setContext} from 'svelte';
-	import {PLAYLIST_SERVICE_CONTEXT, TRACK_SERVICE_CONTEXT} from "$lib/context";
+	import {setContext, type Snippet} from 'svelte';
+	import {CURRENTLY_PLAYING_TRACK_STORE_CONTEXT, PLAYLIST_SERVICE_CONTEXT, TRACK_SERVICE_CONTEXT} from "$lib/context";
 	import type {MediaFile} from "$lib/entity/media-file";
 	import type {Playlist} from "$lib/entity/playlist";
 	import type {Track} from "$lib/entity/track";
@@ -13,6 +13,10 @@
 	import type {MediaType} from "$lib/types/media-type";
 	import {TrackServiceImpl} from "$lib/service/track-service-impl";
 	import Alerts from "$lib/component/alert/Alerts.svelte";
+	import MusicPlayer from "$lib/component/music-player/MusicPlayer.svelte";
+	import type {PersistentStore} from "$lib/types/persistent-store";
+	import type {CurrentlyPlayingTrack} from "$lib/types/music-player";
+	import {createPersistentStore} from "$lib/store/store-factory";
 
 	// Repositories
 	const playlistRepository: Repository<Playlist> = new PlaylistRepository();
@@ -23,11 +27,16 @@
 	const playlistService: PlaylistService = new PlaylistServiceImpl(playlistRepository, trackRepository, mediaFileRepository);
 	const trackService: trackService = new TrackServiceImpl(trackRepository, mediaFileRepository);
 
+	// Stores
+	const currentlyPlayingTrackStore: PersistentStore<CurrentlyPlayingTrack> = createPersistentStore<CurrentlyPlayingTrack>("currently-playing-track", null);
+
 	// Context
 	setContext(PLAYLIST_SERVICE_CONTEXT, playlistService);
 	setContext(TRACK_SERVICE_CONTEXT, trackService)
+	setContext(CURRENTLY_PLAYING_TRACK_STORE_CONTEXT, currentlyPlayingTrackStore)
 
-	let { children }: { children: Snipper } = $props();
+	let { children }: { children: Snippet } = $props();
+
 </script>
 
 <div class="main-layout">
@@ -45,6 +54,10 @@
   	</main>
 
   	<footer>
-    	<h1>Footer</h1>
+    	<MusicPlayer
+			currentlyPlayingTrackStore={currentlyPlayingTrackStore}
+			playlistService={playlistService}
+			trackService={trackService}
+		/>
   	</footer>
 </div>

@@ -3,3 +3,5 @@
 export const PLAYLIST_SERVICE_CONTEXT = Symbol() as Symbol;
 
 export const TRACK_SERVICE_CONTEXT = Symbol() as Symbol;
+
+export const CURRENTLY_PLAYING_TRACK_STORE_CONTEXT = Symbol() as Symbol;

@@ -54,4 +54,19 @@ export interface PlaylistService {
      */
     getTrackCount(id: number): Promise<number>
 
+    /**
+     * Returns tracks that comes before given one in playlist, if given track is not in playlist, it returns the first one
+     */
+    getPreviousTrack(id: number, currentTrackId: number): Promise<Track>
+
+    /**
+     * Returns track that comes after a given one in playlist, if given track is not in playlist, it returns the first one
+     */
+    getNextTrack(id: number, currentTrackId: number): Promise<Track>
+
+    /**
+     * Sorts tracks by addedAt ascending
+     */
+    sortTracks(tracks: Track[]): Track[]
+
 }

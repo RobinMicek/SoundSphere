@@ -1,6 +1,6 @@
 import {createNoise2D} from 'simplex-noise';
-import {mulberry32} from "$lib/util/mulberry";
-import {SVG_NAMESPACE} from "$lib/constants";
+import {mulberry32} from "../util/mulberry";
+import {SVG_NAMESPACE} from "../constants";
 
 /**
  * Generates seeded x by y perlin noise grid

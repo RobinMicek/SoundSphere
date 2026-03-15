@@ -5,12 +5,8 @@ import {MediaType} from "../types/media-type";
 import type {Repository} from "../repository/repository";
 import type {MediaFile} from "../entity/media-file";
 import {generatePolynomialdHash} from "../util/seed";
-import {createSVGColoredGrid, generatePerlinGrid, perlinToColorRGB} from "$lib/util/perlin";
-import {
-    PLAYLIST_COVER_ART_PERLIN_SCALE,
-    PLAYLIST_COVER_ART_PERLIN_SIZE,
-    PLAYLIST_COVER_ART_SVG_CELL_SIZE
-} from "$lib/constants";
+import {createSVGColoredGrid, generatePerlinGrid, perlinToColorRGB} from "../util/perlin";
+import {PLAYLIST_COVER_ART_PERLIN_SCALE, PLAYLIST_COVER_ART_PERLIN_SIZE, PLAYLIST_COVER_ART_SVG_CELL_SIZE} from "../constants";
 
 export class PlaylistServiceImpl implements PlaylistService {
     
@@ -99,6 +95,41 @@ export class PlaylistServiceImpl implements PlaylistService {
 
         return playlist.trackIds.length;
     }
+
+    async getPreviousTrack(id: number, currentTrackId: number): Promise<Track> {
+        return this.getTrackByOffset(id, currentTrackId, -1);
+    }
+
+    async getNextTrack(id: number, currentTrackId: number): Promise<Track> {
+        return this.getTrackByOffset(id, currentTrackId, 1)
+    }
+    
+    public sortTracks(tracks: Track[]): Track[] {
+        return tracks.sort((a: Track, b: Track): number => b.addedAt.getTime() - a.addedAt.getTime());
+    }
+
+    /**
+     * Returns track from playlist offset from current track
+     */
+    private async getTrackByOffset(playlistId: number, currentTrackId: number, offset: number): Promise<Track> {
+        const playlist: Playlist = await this.playlistRepository.get(playlistId);
+
+        if (!playlist.trackIds.length) {
+            throw new Error("The playlist has no tracks.");
+        }
+
+        const allTracks: Track[] = await this.trackRepository.getMany(playlist.trackIds);
+        const sortedTracks: Track[] = this.sortTracks(allTracks);
+
+        const currentIndex = sortedTracks.findIndex(track => track.id === currentTrackId);
+        if (currentIndex === -1) {
+            throw new Error("Current track not found in playlist.");
+        }
+
+        const newIndex = (currentIndex + offset + sortedTracks.length) % sortedTracks.length;
+        return sortedTracks[newIndex];
+    }
+
 
     /**
      * Generates new perlin noise svg using playlist name as seed and returns svg string

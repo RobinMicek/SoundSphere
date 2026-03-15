@@ -58,7 +58,7 @@
 {#if isCreateNewPlaylistModalOpened}
     <PlaylistEditModal
         modalText="New playlist"
-        bind:isLoading={isCreateNewPlaylistModalLoading}
+        isLoading={isCreateNewPlaylistModalLoading}
         onClose={() => {isCreateNewPlaylistModalOpened = false}}
         onSubmit={(playlist) => {
             isCreateNewPlaylistModalLoading = true;

@@ -1,7 +1,7 @@
 <script lang="ts">
     import {getContext, onMount} from 'svelte';
     import {writable, type Writable} from "svelte/store";
-    import {PLAYLIST_SERVICE_CONTEXT, TRACK_SERVICE_CONTEXT} from "$lib/context"
+    import {CURRENTLY_PLAYING_TRACK_STORE_CONTEXT, PLAYLIST_SERVICE_CONTEXT, TRACK_SERVICE_CONTEXT} from "$lib/context"
     import type {PlaylistService} from "$lib/service/playlist-service";
     import type {TrackService} from "$lib/service/track-service";
     import type {Track} from "$lib/entity/track";
@@ -13,9 +13,13 @@
     import PlaylistEditModal from "$lib/component/playlist/PlaylistEditModal.svelte";
     import {triggerAlert} from "$lib/store/alert-store";
     import TrackEditModal from "$lib/component/track/TrackEditModal.svelte";
+    import type {PersistentStore} from "$lib/types/persistent-store";
+    import type {CurrentlyPlayingTrack} from "$lib/types/music-player";
 
     const playlistService = getContext<PlaylistService>(PLAYLIST_SERVICE_CONTEXT);
     const trackService = getContext<TrackService>(TRACK_SERVICE_CONTEXT);
+
+    const currentlyPlayingTrackStore = getContext<PersistentStore<CurrentlyPlayingTrack>>(CURRENTLY_PLAYING_TRACK_STORE_CONTEXT);
 
     let isEditPlaylistModalOpened: boolean = false;
     let isEditPlaylistModalLoading: boolean = false;
@@ -106,13 +110,13 @@
     <PlaylistEditModal
         modalText="Edit playlist"
         initialPlaylistData={playlist}
-        bind:isLoading={isEditPlaylistModalLoading}
+        isLoading={isEditPlaylistModalLoading}
         onClose={() => {isEditPlaylistModalOpened = false}}
         onSubmit={(playlistData) => {
-            isEditPlaylistModalOpened = true;
-            editPlaylist(playlist.id, playlistData)
-                .then(() => isEditPlaylistModalOpened = false)
-                .finally(() => isEditPlaylistModalLoading = false)
+        isEditPlaylistModalOpened = true;
+        editPlaylist(playlist.id, playlistData)
+            .then(() => isEditPlaylistModalOpened = false)
+            .finally(() => isEditPlaylistModalLoading = false)
         }}
     />
 {/if}
@@ -121,13 +125,13 @@
     <TrackEditModal
         modalText="Edit track"
         initialTrackData={$tracks.filter(arr => arr.id === currentlyEditedTrackId)[0]}
-        bind:isLoading={isEditTrackModalLoading}
+        isLoading={isEditTrackModalLoading}
         onClose={() => {isEditTrackModalOpened = false}}
         onSubmit={(trackData) => {
-            isEditTrackModalOpened = true;
-            editTrack(currentlyEditedTrackId,  trackData)
-                .then(() => isEditTrackModalOpened = false)
-                .finally(() => isEditTrackModalLoading = false)
+        isEditTrackModalOpened = true;
+        editTrack(currentlyEditedTrackId,  trackData)
+            .then(() => isEditTrackModalOpened = false)
+            .finally(() => isEditTrackModalLoading = false)
 
         }}
     />
@@ -151,5 +155,6 @@
         onUploadNewTracks={(files) => addNewTracks(playlist.id, files)}
         onClickTrackDelete={(trackId) => deleteTrack(playlist.id, trackId)}
         onClickTrackEdit={(trackId) => {currentlyEditedTrackId = trackId; isEditTrackModalOpened = true;}}
+        onClickTrackPlay={(trackId) => currentlyPlayingTrackStore.set({playlistId, trackId})}
     />
 {/if}

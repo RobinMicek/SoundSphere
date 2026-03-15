@@ -10,8 +10,10 @@
 
 @import "./header.css";
 
-@import "playlist-grid.css";
-@import "playlist.css";
+@import "./playlist-grid.css";
+@import "./playlist.css";
+
+@import "./music-player.css";
 
 *,
 *::before,
