@@ -105,7 +105,7 @@ export class PlaylistServiceImpl implements PlaylistService {
     }
     
     public sortTracks(tracks: Track[]): Track[] {
-        return tracks.sort((a: Track, b: Track): number => b.addedAt.getTime() - a.addedAt.getTime());
+        return tracks.sort((a: Track, b: Track): number => b.id - a.id); // Sorting by id, instead of added at, because it not stable if all tracks were added in one gol
     }
 
     /**
