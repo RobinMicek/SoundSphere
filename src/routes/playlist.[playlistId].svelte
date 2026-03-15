@@ -62,7 +62,7 @@
 
     async function loadTracks(playlistId: number): Promise<void> {
         playlistService.getAllTracks(playlistId)
-            .then(arr => tracks.set(arr))
+            .then(arr => tracks.set(playlistService.sortTracks(arr)))
             .catch(e => triggerAlert("Failed to load tracks", e.message, "error"))
     }
 
@@ -71,7 +71,7 @@
             trackService.create(file)
                 .then((savedTrack: Track) => {
                     playlistService.addTrack(playlistId, savedTrack.id);
-                    tracks.update(arr => [...arr, savedTrack]);
+                    tracks.update(arr => playlistService.sortTracks([...arr, savedTrack]));
                 })
                 .catch(e => triggerAlert("Failed to add new tracks", e.message , "error"));
         });
@@ -83,7 +83,7 @@
                 playlist.trackIds = [...playlist.trackIds.filter(arr => arr.id != trackId)];
                 playlistService.update(playlistId, playlist);
 
-                tracks.update(arr => [...arr.filter(track => track.id !== trackId)]);
+                tracks.update(arr => playlistService.sortTracks([...arr.filter(track => track.id !== trackId)]));
 
                 triggerAlert("Track successfully deleted", "", "success");
             })
@@ -94,7 +94,7 @@
         trackService.update(trackId, trackData)
             .then(updatedTrack =>
                 tracks.update(tracks =>
-                    [...tracks.filter(arr => arr.id !== trackId), updatedTrack]
+                    playlistService.sortTracks([...tracks.filter(arr => arr.id !== trackId), updatedTrack])
                 )
             )
             .catch(e => triggerAlert("Failed to update track data", e.message, "error"))
