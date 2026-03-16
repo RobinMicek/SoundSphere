@@ -9,7 +9,7 @@
     import FullscreenMusicPlayer from "$lib/component/music-player/FullscreenMusicPlayer.svelte";
     import {triggerAlert} from "$lib/store/alert-store";
     import {clamp} from "$lib/util/clamp";
-    import {getAnalyser, initAudio} from "$lib/util/audio-analyzer";
+    import {initAudio} from "$lib/util/audio-analyzer";
 
     const { currentlyPlayingTrackStore, playlistService, trackService } = $props<{
         currentlyPlayingTrackStore: PersistentStore<CurrentlyPlayingTrack>
@@ -32,8 +32,6 @@
 
     let currentTrack: Track = $state();
     let currentTrackUrl: string = $state();
-
-    let audioAnalyzer: AnalyserNode = $state();
 
     function handleToggleFullscreenPlayer(): void {
         isFullscreenPlayerOpened = !isFullscreenPlayerOpened;
@@ -131,9 +129,7 @@
 
     onMount(() => {
         // Create audio analyzer for the visualizer
-        initAudio(audio).then(() => {
-            audioAnalyzer = getAnalyser();
-        });
+        initAudio(audio);
     })
 
     // destroy track blob url when this component is destroyed
@@ -163,7 +159,6 @@
     {#if isFullscreenPlayerOpened}
 
         <FullscreenMusicPlayer
-            analyzer={audioAnalyzer}
             playlistCoverImageBlobPromise={playlistService.getCoverArtBlob($currentlyPlayingTrackStore.playlistId)}
             currentTrack={currentTrack}
             progress={progress}
