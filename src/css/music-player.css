@@ -100,8 +100,13 @@
             }
         }
 
-        .visualizer {
+        canvas.visualizer {
             flex: 1;
+            min-height: 0;
+
+            padding-top: 2rem;
+
+
         }
 
         .track-info {
@@ -212,7 +217,7 @@
                 }
             }
 
-            .visualizer {
+            canvas.visualizer {
                 visibility: hidden; /* Not doing display: none, since we still need the element to exist so it can create the space between header and control panel (flex grow) */
             }
 

@@ -2,13 +2,14 @@
     import type {PlaylistService} from "$lib/service/playlist-service";
     import type {TrackService} from "$lib/service/track-service";
     import type {Track} from "$lib/entity/track";
-    import {onDestroy} from "svelte";
+    import {onDestroy, onMount} from "svelte";
     import type {PersistentStore} from "$lib/types/persistent-store";
     import type {CurrentlyPlayingTrack} from "$lib/types/music-player";
     import SmallMusicPlayer from "$lib/component/music-player/SmallMusicPlayer.svelte";
     import FullscreenMusicPlayer from "$lib/component/music-player/FullscreenMusicPlayer.svelte";
     import {triggerAlert} from "$lib/store/alert-store";
     import {clamp} from "$lib/util/clamp";
+    import {getAnalyser, initAudio} from "$lib/util/audio-analyzer";
 
     const { currentlyPlayingTrackStore, playlistService, trackService } = $props<{
         currentlyPlayingTrackStore: PersistentStore<CurrentlyPlayingTrack>
@@ -31,6 +32,8 @@
 
     let currentTrack: Track = $state();
     let currentTrackUrl: string = $state();
+
+    let audioAnalyzer: AnalyserNode = $state();
 
     function handleToggleFullscreenPlayer(): void {
         isFullscreenPlayerOpened = !isFullscreenPlayerOpened;
@@ -126,6 +129,13 @@
         loadTrack(currentlyPlayingTrackStore.get().trackId);
     });
 
+    onMount(() => {
+        // Create audio analyzer for the visualizer
+        initAudio(audio).then(() => {
+            audioAnalyzer = getAnalyser();
+        });
+    })
+
     // destroy track blob url when this component is destroyed
     onDestroy(() => {
         if (currentTrackUrl) URL.revokeObjectURL(currentTrackUrl);
@@ -153,6 +163,7 @@
     {#if isFullscreenPlayerOpened}
 
         <FullscreenMusicPlayer
+            analyzer={audioAnalyzer}
             playlistCoverImageBlobPromise={playlistService.getCoverArtBlob($currentlyPlayingTrackStore.playlistId)}
             currentTrack={currentTrack}
             progress={progress}
