@@ -43,10 +43,11 @@
     async function deletePlaylist(id: number) {
         playlistService.get(id)
             // Delete all tracks in playlist
-            .then(playlist =>
-                Promise.all(playlist.trackIds.map(trackId => trackService.delete(trackId)))
-            )
-            .then(() => playlistService.delete(id))
+            .then((playlist) => {
+                playlistService.delete(id);
+                return playlist;
+            })
+            .then(playlist => Promise.all(playlist.trackIds.map(trackId => trackService.delete(trackId))))
             .then(() => {
                 triggerAlert("Playlist successfully deleted", "", "success");
                 navigate("/");
@@ -80,8 +81,7 @@
     async function deleteTrack(playlistId: number, trackId: number) {
         trackService.delete(trackId)
             .then(() => {
-                playlist.trackIds = [...playlist.trackIds.filter(arr => arr.id != trackId)];
-                playlistService.update(playlistId, playlist);
+                playlistService.deleteTrack(playlistId, trackId);
 
                 tracks.update(arr => playlistService.sortTracks([...arr.filter(track => track.id !== trackId)]));
 
