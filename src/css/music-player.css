@@ -71,7 +71,8 @@
         .header {
             img {
                 aspect-ratio: 1/1;
-                width: 15%;
+                width: auto;
+                max-width: 25%;
 
                 border-radius: 1rem;
             }
