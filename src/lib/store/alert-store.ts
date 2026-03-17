@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { ALERT_TIMEOUT_MS } from "../constants";
+import {ALERT_TIMEOUT_MS, LOG_ALERTS_IN_CONSOLE} from "../constants";
 
 export type AlertType = 'success' | 'error' | 'info';
 
@@ -24,6 +24,14 @@ export function triggerAlert(title: string, description: string | null = null, t
     };
 
     alerts.update((all) => [...all, newAlert]);
+
+    if (LOG_ALERTS_IN_CONSOLE) {
+        switch (type) {
+            case "success": console.log(title, description); break;
+            case "info": console.log(title, description); break;
+            case "error": console.error(title, description); break;
+        }
+    }
 
     setTimeout(() => {
         // remove alert after duration

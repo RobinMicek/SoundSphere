@@ -11,4 +11,7 @@ export const PLAYLIST_COVER_ART_PERLIN_SCALE = 0.01;
 export const PLAYLIST_COVER_ART_SVG_CELL_SIZE = 5;
 
 /** Time after which alert popup hides */
-export const ALERT_TIMEOUT_MS = 5000
+export const ALERT_TIMEOUT_MS = 5000;
+
+/** If displayed alerts also get logged into the console */
+export const LOG_ALERTS_IN_CONSOLE = true;
