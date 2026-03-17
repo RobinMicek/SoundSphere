@@ -39,8 +39,8 @@
     }
 
     async function handlePlayPreviousTrack(): Promise<void> {
-        const playlistId = currentlyPlayingTrackStore.get().playlistId;
-        const currentTrackId = currentlyPlayingTrackStore.get().trackId;
+        const playlistId = currentlyPlayingTrackStore?.get()?.playlistId;
+        const currentTrackId = currentlyPlayingTrackStore?.get()?.trackId;
 
         if (!playlistId || !currentTrackId) return;
 
@@ -53,8 +53,8 @@
     }
 
     async function handlePlayNextTrack(): Promise<void> {
-        const playlistId = currentlyPlayingTrackStore.get().playlistId;
-        const currentTrackId = currentlyPlayingTrackStore.get().trackId;
+        const playlistId = currentlyPlayingTrackStore?.get()?.playlistId;
+        const currentTrackId = currentlyPlayingTrackStore?.get()?.trackId;
 
         if (!playlistId || !currentTrackId) return;
 
@@ -117,15 +117,18 @@
                 }
 
                 currentlyPlayingTrackStore.remove();
-                triggerAlert("Cannot play this track", "error");
+                triggerAlert("Cannot play this track", "", "error");
             });
     }
 
     // handle play new song
     $effect(() => {
-        if (!$currentlyPlayingTrackStore) return;
+        if (!$currentlyPlayingTrackStore) return; // This check with dollar sign needs to be here, otherwise the effect is not triggered !!!
 
-        loadTrack(currentlyPlayingTrackStore.get().trackId);
+        const currentlyPlayingTrack: CurrentlyPlayingTrack = currentlyPlayingTrackStore?.get();
+        if (!currentlyPlayingTrack?.playlistId || !currentlyPlayingTrack?.trackId) return;
+
+        loadTrack(currentlyPlayingTrack.trackId);
     });
 
     onMount(() => {
@@ -160,7 +163,7 @@
     {#if isFullscreenPlayerOpened}
 
         <FullscreenMusicPlayer
-            playlistCoverImageBlobPromise={playlistService.getCoverArtBlob($currentlyPlayingTrackStore.playlistId)}
+            playlistCoverImageBlobPromise={playlistService.getCoverArtBlob($currentlyPlayingTrackStore?.playlistId)}
             currentTrack={currentTrack}
             progress={progress}
             isPlaying={isPlaying}
