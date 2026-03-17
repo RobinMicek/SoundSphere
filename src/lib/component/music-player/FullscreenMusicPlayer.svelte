@@ -130,12 +130,6 @@
 
 <div class="fullscreen-player">
 
-    <div class="minimize-player">
-        <button onclick={handleToggleFullscreenPlayer}>
-            {#if isFullscreenPlayerOpened} <ChevronDown /> {:else} <ChevronUp /> {/if}
-        </button>
-    </div>
-
     <div class="header">
         {#await playlistCoverImageBlobPromise}
             <img src="/placeholder-playlist-cover-art.svg" alt="Playlist cover art placeholder">
@@ -209,6 +203,9 @@
 
             <button onclick={handlePlayNextTrack} disabled={currentTrack == null}>
                 <ArrowRightToLine />
+            </button>
+            <button onclick={handleToggleFullscreenPlayer}>
+                {#if isFullscreenPlayerOpened} <ChevronDown /> {:else} <ChevronUp /> {/if}
             </button>
         </div>
     </div>
