@@ -44,9 +44,11 @@
     function updateVisualizer() {
         if (!analyzer || !ctx || !canvas) return;
 
-        const NUM_BARS = Math.floor(canvasWidth / (BAR_WIDTH + BAR_SPACING));
-        const MAX_BAR_HEIGHT = canvasHeight;
         const MIDDLE_OF_CANVAS_HEIGHT = canvasHeight / 2;
+        const MIDDLE_OF_CANVAS_WIDTH = canvasWidth / 2;
+
+        const NUM_BARS = Math.floor(MIDDLE_OF_CANVAS_WIDTH / (BAR_WIDTH + BAR_SPACING));
+        const MAX_BAR_HEIGHT = MIDDLE_OF_CANVAS_HEIGHT;
 
         analyzer.fftSize = FFT_SIZE;
 
@@ -72,17 +74,22 @@
 
             const barHeight = clamp(avg, MIN_BAR_HEIGHT, MAX_BAR_HEIGHT);
             const x = i * (BAR_WIDTH + BAR_SPACING);
-            const y = MIDDLE_OF_CANVAS_HEIGHT - barHeight;
 
             const hue = (i / NUM_BARS) * 360;
             ctx.fillStyle = `hsl(${hue},100%,50%)`;
 
-            // Draw top half
-            ctx.fillRect(x, y, BAR_WIDTH, barHeight);
+            // Top - Right
+            ctx.fillRect(MIDDLE_OF_CANVAS_WIDTH - x, MIDDLE_OF_CANVAS_HEIGHT - barHeight, BAR_WIDTH, barHeight);
 
-            // Draw bottom half mirrored
-            ctx.fillRect(x, MIDDLE_OF_CANVAS_HEIGHT, BAR_WIDTH, barHeight);
+            // Bottom - Right
+            ctx.fillRect(MIDDLE_OF_CANVAS_WIDTH - x, MIDDLE_OF_CANVAS_HEIGHT, BAR_WIDTH, barHeight);
 
+
+            // Top - Left
+            ctx.fillRect(MIDDLE_OF_CANVAS_WIDTH + x, MIDDLE_OF_CANVAS_HEIGHT - barHeight, BAR_WIDTH, barHeight);
+
+            // Bottom - Left
+            ctx.fillRect(MIDDLE_OF_CANVAS_WIDTH + x, MIDDLE_OF_CANVAS_HEIGHT, BAR_WIDTH, barHeight);
         }
 
         animationFrameId = requestAnimationFrame(updateVisualizer);
