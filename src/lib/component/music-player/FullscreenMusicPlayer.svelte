@@ -179,6 +179,7 @@
             step="0.001"
             max="1"
             oninput={handleProgressChange}
+            disabled={currentTrack == null}
         >
     </div>
 
@@ -199,14 +200,14 @@
         </div>
 
         <div class="controls">
-            <button onclick={handlePlayPreviousTrack}>
+            <button onclick={handlePlayPreviousTrack} disabled={currentTrack == null}>
                 <ArrowLeftToLine />
             </button>
-            <button onclick={handleTogglePlay}>
+            <button onclick={handleTogglePlay} disabled={currentTrack == null}>
                 {#if isPlaying} <Pause /> {:else} <Play /> {/if}
             </button>
 
-            <button onclick={handlePlayNextTrack}>
+            <button onclick={handlePlayNextTrack} disabled={currentTrack == null}>
                 <ArrowRightToLine />
             </button>
         </div>
