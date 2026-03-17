@@ -116,7 +116,8 @@
                     return;
                 }
 
-                triggerAlert("Cannot play this track", e.message, "error");
+                currentlyPlayingTrackStore.remove();
+                triggerAlert("Cannot play this track", "error");
             });
     }
 
