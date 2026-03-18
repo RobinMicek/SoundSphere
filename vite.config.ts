@@ -14,5 +14,9 @@ export default defineConfig({
     alias: {
       $lib: path.resolve('./src/lib')
     }
-  }
+  },
+
+  define: {
+    global: 'globalThis', // Allows buffer for music-metadata-reader
+  },
 })

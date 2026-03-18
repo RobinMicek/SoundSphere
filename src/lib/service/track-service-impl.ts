@@ -3,6 +3,8 @@ import type {Track} from "../entity/track";
 import type {Repository} from "../repository/repository";
 import {MediaType} from "../types/media-type";
 import type {TrackService} from "./track-service";
+import {MP3Metadata} from "$lib/types/mp3-metadata";
+import {readMP3Metadata} from "$lib/util/mp3-metadata-reader";
 
 
 export class TrackServiceImpl implements TrackService {
@@ -25,14 +27,16 @@ export class TrackServiceImpl implements TrackService {
 
     async create(audioFile: File): Promise<Track> {
         // Extract information from file
-        const duration: number = await this.readMP3Duration(audioFile);
+        const metadata: MP3Metadata = await this.readTrackMetadata(audioFile)
+
+        const duration: number = metadata.duration ?? await this.readMP3Duration(audioFile);
 
         if (!duration) throw new Error("Could not parse duration from uploaded file");
 
         const entity: Omit<Track, "id"> = {
-            name: audioFile.name ?? "Unnamed track",
-            author: "Unknown",
-            album: undefined,
+            name: metadata.title ?? audioFile.name ?? "Unnamed track",
+            author: metadata.artist ?? "Unknown",
+            album: metadata.album,
             audioMediaFileId: -1,
             duration: duration,
             addedAt: new Date()
@@ -73,6 +77,9 @@ export class TrackServiceImpl implements TrackService {
         return audio.blob;
     }
 
+    /**
+     * Reads MP3 duration - used as fallback if metadata reader fails
+     */
     private async readMP3Duration(file: File): Promise<number> {
         return new Promise((resolve, reject) => {
             const audioElement: HTMLAudioElement = document.createElement("audio");
@@ -90,6 +97,13 @@ export class TrackServiceImpl implements TrackService {
                 URL.revokeObjectURL(url);
             });
         });
+    }
+
+    /**
+     * Returns MP3 metadata from track
+     */
+    private async readTrackMetadata(track: File): Promise<MP3Metadata> {
+        return readMP3Metadata(track);
     }
 
 }
