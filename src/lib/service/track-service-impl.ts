@@ -3,8 +3,8 @@ import type {Track} from "../entity/track";
 import type {Repository} from "../repository/repository";
 import {MediaType} from "../types/media-type";
 import type {TrackService} from "./track-service";
-import {MP3Metadata} from "$lib/types/mp3-metadata";
-import {readMP3Metadata} from "$lib/util/mp3-metadata-reader";
+import type {MP3Metadata} from "../types/mp3-metadata";
+import {readMP3Metadata} from "../util/mp3-metadata-reader";
 
 
 export class TrackServiceImpl implements TrackService {
