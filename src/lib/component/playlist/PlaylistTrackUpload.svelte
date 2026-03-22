@@ -75,7 +75,7 @@
 
         <Button
             text="Upload"
-            type="secondary"
+            color="secondary"
             disabled={isUploading}
             fullSize={true}
             Icon={Upload}

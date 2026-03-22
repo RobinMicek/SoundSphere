@@ -26,14 +26,18 @@
 
             <Button
                 text=""
-                type="primary"
+                color="primary"
                 Icon={X}
                 onClick={onClose}
             />
         </div>
 
         <div class="modal-content">
-            <form onsubmit={(event) => {event.preventDefault(); onSubmit(playlistData)}}>
+            <form onsubmit={(event) => {
+                if (!(event.target?.checkValidity())) return;
+                event.preventDefault();
+                onSubmit(playlistData);
+            }}>
                 <Input
                     name="Name"
                     type="text"
@@ -57,11 +61,11 @@
 
                 <Button
                     text="Save"
-                    type="accent"
+                    color="accent"
+                    type="submit"
                     disabled={isLoading}
                     fullSize={true}
                     Icon={Save}
-                    onClick={() => {onSubmit(playlistData)}}
                 />
             </form>
         </div>

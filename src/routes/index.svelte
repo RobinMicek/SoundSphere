@@ -45,7 +45,7 @@
 <div class="button-group right">
     <Button
         text="New playlist"
-        type="secondary"
+        color="secondary"
         Icon={Plus}
         onClick={() => isCreateNewPlaylistModalOpened = true}
     />

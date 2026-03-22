@@ -28,14 +28,18 @@
 
             <Button
                     text=""
-                    type="primary"
+                    color="primary"
                     Icon={X}
                     onClick={onClose}
             />
         </div>
 
         <div class="modal-content">
-            <form onsubmit={(event) => {event.preventDefault(); onSubmit(trackData)}}>
+            <form onsubmit={(event) => {
+                if (!(event.target?.checkValidity())) return;
+                event.preventDefault();
+                onSubmit(trackData);
+            }}>
                 <Input
                     name="Name"
                     type="text"
@@ -49,7 +53,7 @@
                 <Input
                     name="Author"
                     type="text"
-                    required={false}
+                    required={true}
                     placeholder="Johann Pachelbel"
                     bind:value={trackData.author}
                     Icon={User}
@@ -68,11 +72,11 @@
 
                 <Button
                     text="Save"
-                    type="accent"
+                    color="accent"
+                    type="submit"
                     disabled={isLoading}
                     fullSize={true}
                     Icon={Save}
-                    onClick={() => {onSubmit(trackData)}}
                 />
             </form>
         </div>

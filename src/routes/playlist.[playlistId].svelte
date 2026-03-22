@@ -140,7 +140,7 @@
 
 <Button
     text="All playlists"
-    type="secondary"
+    color="secondary"
     Icon={CornerUpLeft}
     onClick={() => navigate("/")}
 />

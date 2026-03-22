@@ -41,14 +41,14 @@
     <div class="button-group left">
         <Button
             text="Edit"
-            type="accent"
+            color="accent"
             Icon={SquarePen}
             onClick={onClickEdit}
         />
 
         <Button
             text="Delete"
-            type="destructive"
+            color="destructive"
             Icon={Trash}
             onClick={onClickDelete}
         />
