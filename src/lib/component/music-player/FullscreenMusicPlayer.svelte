@@ -4,8 +4,8 @@
     import type {Track} from "$lib/entity/track";
     import {clamp} from "$lib/util/clamp";
     import {onDestroy, onMount} from "svelte";
-    import {getAnalyser} from "$lib/util/audio-analyzer";
 
+    export let analyzer: AnalyserNode;
     export let playlistCoverImageBlobPromise: () => Promise<Blob>;
     export let currentTrack: Track;
     export let progress: number;
@@ -31,7 +31,6 @@
 
     const FFT_SIZE = 256;
 
-    let analyzer: AnalyserNode;
     let resizeObserver: ResizeObserver; // Used to calculate canvas dimensions on window resize
 
     let canvas: HTMLCanvasElement;
@@ -40,59 +39,65 @@
     let canvasHeight: number;
 
     let animationFrameId: number;
-
-    function updateVisualizer() {
-        if (!analyzer || !ctx || !canvas) return;
-
-        const MIDDLE_OF_CANVAS_HEIGHT = canvasHeight / 2;
-        const MIDDLE_OF_CANVAS_WIDTH = canvasWidth / 2;
-
-        const NUM_BARS = Math.floor(MIDDLE_OF_CANVAS_WIDTH / (BAR_WIDTH + BAR_SPACING));
-        const MAX_BAR_HEIGHT = MIDDLE_OF_CANVAS_HEIGHT;
+    
+    function startVisualizer() {
+        cancelAnimationFrame(animationFrameId);
 
         analyzer.fftSize = FFT_SIZE;
 
-        const freqData = new Uint8Array(analyzer.frequencyBinCount);
-        analyzer.getByteFrequencyData(freqData);
+        function animationLoop() {
+            if (!analyzer || !ctx || !canvas) return;
 
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            const MIDDLE_OF_CANVAS_HEIGHT = canvasHeight / 2;
+            const MIDDLE_OF_CANVAS_WIDTH = canvasWidth / 2;
 
-        for (let i = 0; i < NUM_BARS; i++) {
-            const startFrequencyIndex = i * (freqData.length / NUM_BARS);
-            const endFrequencyIndex = (i + 1) * (freqData.length / NUM_BARS);
+            const NUM_BARS = Math.floor(MIDDLE_OF_CANVAS_WIDTH / (BAR_WIDTH + BAR_SPACING));
+            const MAX_BAR_HEIGHT = MIDDLE_OF_CANVAS_HEIGHT;
 
-            let sum = 0;
-            let count = 0;
+            const freqData = new Uint8Array(analyzer.frequencyBinCount);
+            analyzer.getByteFrequencyData(freqData);
 
-            // Calculate average of frequencies
-            for (let x = Math.floor(startFrequencyIndex); x < Math.ceil(endFrequencyIndex); x++) {
-                sum += freqData[x] ?? 0;
-                count++;
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+            for (let i = 0; i < NUM_BARS; i++) {
+                const startFrequencyIndex = i * (freqData.length / NUM_BARS);
+                const endFrequencyIndex = (i + 1) * (freqData.length / NUM_BARS);
+
+                let sum = 0;
+                let count = 0;
+
+                // Calculate average of frequencies
+                for (let x = Math.floor(startFrequencyIndex); x < Math.ceil(endFrequencyIndex); x++) {
+                    sum += freqData[x] ?? 0;
+                    count++;
+                }
+
+                const avg = sum / count;
+
+                const barHeight = clamp(avg, MIN_BAR_HEIGHT, MAX_BAR_HEIGHT);
+                const x = i * (BAR_WIDTH + BAR_SPACING);
+
+                const hue = (i / NUM_BARS) * 360;
+                ctx.fillStyle = `hsl(${hue},100%,50%)`;
+
+                // Top - Right
+                ctx.fillRect(MIDDLE_OF_CANVAS_WIDTH - x, MIDDLE_OF_CANVAS_HEIGHT - barHeight, BAR_WIDTH, barHeight);
+
+                // Bottom - Right
+                ctx.fillRect(MIDDLE_OF_CANVAS_WIDTH - x, MIDDLE_OF_CANVAS_HEIGHT, BAR_WIDTH, barHeight);
+
+
+                // Top - Left
+                ctx.fillRect(MIDDLE_OF_CANVAS_WIDTH + x, MIDDLE_OF_CANVAS_HEIGHT - barHeight, BAR_WIDTH, barHeight);
+
+                // Bottom - Left
+                ctx.fillRect(MIDDLE_OF_CANVAS_WIDTH + x, MIDDLE_OF_CANVAS_HEIGHT, BAR_WIDTH, barHeight);
             }
 
-            const avg = sum / count;
-
-            const barHeight = clamp(avg, MIN_BAR_HEIGHT, MAX_BAR_HEIGHT);
-            const x = i * (BAR_WIDTH + BAR_SPACING);
-
-            const hue = (i / NUM_BARS) * 360;
-            ctx.fillStyle = `hsl(${hue},100%,50%)`;
-
-            // Top - Right
-            ctx.fillRect(MIDDLE_OF_CANVAS_WIDTH - x, MIDDLE_OF_CANVAS_HEIGHT - barHeight, BAR_WIDTH, barHeight);
-
-            // Bottom - Right
-            ctx.fillRect(MIDDLE_OF_CANVAS_WIDTH - x, MIDDLE_OF_CANVAS_HEIGHT, BAR_WIDTH, barHeight);
-
-
-            // Top - Left
-            ctx.fillRect(MIDDLE_OF_CANVAS_WIDTH + x, MIDDLE_OF_CANVAS_HEIGHT - barHeight, BAR_WIDTH, barHeight);
-
-            // Bottom - Left
-            ctx.fillRect(MIDDLE_OF_CANVAS_WIDTH + x, MIDDLE_OF_CANVAS_HEIGHT, BAR_WIDTH, barHeight);
+            animationFrameId = requestAnimationFrame(animationLoop);
         }
 
-        animationFrameId = requestAnimationFrame(updateVisualizer);
+        animationLoop();
     }
 
     function resizeCanvas() {
@@ -108,23 +113,26 @@
         ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
 
         // Calculate smoothing based on canvas height
-        analyzer.smoothingTimeConstant = clamp(canvasHeight / REFERENCE_VISUALIZER_HEIGHT, MIN_SMOOTHING, MAX_SMOOTHING);
+        if (analyzer) {
+            analyzer.smoothingTimeConstant = clamp(canvasHeight / REFERENCE_VISUALIZER_HEIGHT, MIN_SMOOTHING, MAX_SMOOTHING);
+        }
+    }
+
+    $: if (analyzer) {
+        startVisualizer();
     }
 
     onMount(() => {
         ctx = canvas.getContext("2d");
-        analyzer = getAnalyser();
 
         resizeObserver = new ResizeObserver(resizeCanvas);
         resizeObserver.observe(canvas)
         resizeCanvas();
-
-        updateVisualizer();
     })
 
     onDestroy(() => {
-        resizeObserver.disconnect();
-        cancelAnimationFrame(animationFrameId)
+        resizeObserver?.disconnect();
+        cancelAnimationFrame(animationFrameId);
     })
 </script>
 

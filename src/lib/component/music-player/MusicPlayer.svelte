@@ -9,7 +9,7 @@
     import FullscreenMusicPlayer from "$lib/component/music-player/FullscreenMusicPlayer.svelte";
     import {triggerAlert} from "$lib/store/alert-store";
     import {clamp} from "$lib/util/clamp";
-    import {initAudio} from "$lib/util/audio-analyzer";
+    import {getAnalyser, initAudio} from "$lib/util/audio-analyzer";
 
     const { currentlyPlayingTrackStore, playlistService, trackService } = $props<{
         currentlyPlayingTrackStore: PersistentStore<CurrentlyPlayingTrack>
@@ -25,6 +25,8 @@
     let progress: number = $state(0);
     let playlistCoverImageBlobPromise: () => Promise<Blob>;
     // ↑ These are just for reactivity, we dont touch these directly, they are updated via listeners
+
+    let analyser: AnalyserNode = $state();
 
     let isFullscreenPlayerOpened: boolean = $state(false);
 
@@ -131,10 +133,15 @@
         loadTrack(currentlyPlayingTrack.trackId);
     });
 
-    onMount(() => {
-        // Create audio analyzer for the visualizer
-        initAudio(audio);
-    })
+    // Init audio needs for a user interaction to happen first
+    ["click", "touchstart", "keydown"].forEach(e => {
+        document.addEventListener(e, () => {
+            initAudio(audio)
+                .then(analyser = getAnalyser());
+        },
+        { once: true });
+    });
+
 
     // destroy track blob url when this component is destroyed
     onDestroy(() => {
@@ -163,6 +170,7 @@
     {#if isFullscreenPlayerOpened}
 
         <FullscreenMusicPlayer
+            analyzer={analyser}
             playlistCoverImageBlobPromise={playlistService.getCoverArtBlob($currentlyPlayingTrackStore?.playlistId)}
             currentTrack={currentTrack}
             progress={progress}
