@@ -39,7 +39,7 @@
     let canvasHeight: number;
 
     let animationFrameId: number;
-    
+
     function startVisualizer() {
         cancelAnimationFrame(animationFrameId);
 

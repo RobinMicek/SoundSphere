@@ -105,6 +105,8 @@
                 return trackService.getAudioBlob(currentTrack.id);
             })
             .then((blob: Blob) => {
+                if (currentTrackUrl) URL.revokeObjectURL(currentTrackUrl);
+                
                 currentTrackUrl = URL.createObjectURL(blob);
                 audio.src = currentTrackUrl;
 
