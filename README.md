@@ -1,47 +1,146 @@
-# Svelte + TS + Vite
+# SoundSphere
+![](assets/fullscreen-player.png)
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+**Semestrální práce - KAJ 2026 - Robin Míček**
 
-## Recommended IDE Setup
+Webová aplikace, která slouží jako hudební přehrávač a správce playlistů a funguje plně offline. 
+Každý playlist je doplněn unikátním generovaným cover artem a během přehrávání je k dispozici vizualizace zvuku, 
+která reaguje na aktuální frekvence.
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+## Uživatelská dokumentace
+### Přidání playlistu
+Nový playlist je možné vytvořit pomocí tlačítka *New playlist* (**1**) na domovské stránce.
+![](assets/new-playlist-button.png)
 
-## Need an official Svelte framework?
+Následně se otevře formulář, ve kterém vyplnite název (**1**) a popis (**2**) playlistu.
+Poté klikněte na tlačítko *Save* (**3**).
+![](assets/new-playlist-modal.png)
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+Vytvoření playlist se následně zobrazí na domovské obrazovce a kliknutím na něj zobrazíte jeho detail (**2**).
+![](assets/new-playlist-created.png)
 
-## Technical considerations
+### Upravení playlistu
+Playlist upravíte v jeho detailu kliknutím na tlačítko *Edit* (**1**).
+![](assets/edit-playlist-button.png)
 
-**Why use this over SvelteKit?**
+Vyskočí na Vás formulář, ve kterém můžete upravit jeho jméno (**1**) a popis (**2**). 
+Změny potvrdíte kliknutím na tlačítko *Save* (**3**).
+![](assets/edit-playlist-modal.png)
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+### Smazání playlistu
+Playlist smažete kliknutím na tlačítko *Delete* (**1**) v jeho detailu.
+![](assets/delete-playlist-button.png)
 
-This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+Po úspěšném smazání budete přesměrování na domovskou stránku.
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+Pozn. Při smazání playlistu se zároveň smažou i všechny skladby, které playlist obsahoval.
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
+### Přidání skladby
+Skladby přidáte v detailu playlistu, do kterého je chcete přidat.
+Přetáhněte skladby to zóny *Drag & drop files here* (**1**), 
+případně kliknutím na tu samou zónu se otevře prohlížeč souborů, ze kterého vyberete skladby pro nahrání.
+![](assets/upload-tracks-zone.png)
 
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
+Následně se ukáže seznam Vámi zvolených skladeb (**1**), kliknutím na tlačítko *Upload* (**2**) je potvrdíte a budou nahrány.
+![](assets/upload-tracks-confirm.png)
 
-**Why include `.vscode/extensions.json`?**
+Poté jsou již nahrané skladby (**1**) dostupné v playlistu.
+![](assets/upload-tracks-done.png)
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+### Upravení skladby
+Pro upravení skladby klikněte na tlačítko *Tužky* (**1**) v seznamu skladeb.
+![](assets/edit-track-button.png)
 
-**Why enable `allowJs` in the TS template?**
+V otevřeném formuláři následně můžete upravit její název (**1**), interpreta (**2**) nebo album (**3**). Změny potvrdíte kliknutím na *Save* (**4**).
+![](assets/edit-track-modal.png)
 
-While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds: not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
+### Smazání skladby
+Skladbu je možné smazat pomocí tlačítka *Koše* (**1**) v seznamu skladeb.
+![](assets/delete-track-button.png)
 
-**Why is HMR not preserving my local component state?**
+### Přehrání skladby
+Konkrétní skladbu je možné přehrát pomocí tlačítka *Spustit* (**1**) v seznamu skladeb.
+![](assets/play-track.png)
 
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
+### Ovládání přehrávače
+1. Ztlumení přehrávače
+2. Ovládání hlasitosti
+3. Posunutí v čase
+4. Název přehrávané skladby
+5. Aktuální a celkový čas skladby
+6. Předchozí skladba
+7. Spuštění/zastavení přehrávání
+8. Následující skladba
+9. Otevření celoobrazovkového přehrávače
 
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
+Ovládání v celoobrazovkovém přehrávači funguje obdobně.
 
-```ts
-// store.ts
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
-```
+![](assets/player-controls.png)
+
+## Technická dokumentace
+### Použité technologie a knihovny
+- **Jazyk:** Typescript
+- **Framework:** Svelte
+- **Build systém:** Vite
+
+
+- **sv-router** - Router pro klientskou navigaci mezi stránkami
+- **lucide icons** - Ikony
+- **music-media-browser** a **buffer** - Čtení metadat z nahraných MP3 souborů
+- **simplex-noise** - Generování *perlinovského* šumu pro *cover arts* playlistů
+- **vite-plugin-pwa** - Cachování souborů pro offline režim
+
+
+### Architektura
+Aplikace používá vrstevnatou architekturu Entity → Repository → Service → UI.
+
+Vrstvu *Repository* lze v tomto případě považovat spíše za DAO, které poskytuje metody pro základní operace CRUD. 
+
+Vrstva *Entity* je zde realizována pouze prostřednictvím interfaců, které definují strukturu dat, se kterými aplikace pracuje.
+
+### Ukládání skladeb
+Skladby a cover arts playlistů se ukládají do IndexedDB jako bloby a jsou považovány za samostatné entity typu MediaFile. 
+Tyto entity jsou následně propojeny s objekty Track nebo Playlist, které na ně mají vazbu.
+
+Při nahrání MP3 souboru jsou pomocí knihovny *music-media-browser* načtena jeho metadata, jako název skladby, autor nebo album. 
+Pokud některá metadata nejsou dostupná, aplikace použije výchozí hodnoty, aby bylo možné skladbu bez problémů zobrazit a přehrát.
+
+### Generování *cover arts* playlistů
+Z názvu playlistu se nejprve vytvoří 32bitový hash, který slouží jako seed pro vytvoření pseudonáhodné funkce *mulberry32*. 
+Následně je vytvořen **x × x** grid, kde každá hodnota na pozici (i, j) odpovídá výstupu *Perlinova šumu*, 
+přičemž samotný *Perlinův šum* využívá jako seed právě funkci mulberry32.
+
+Každá výsledná hodnota na pozici (i, j) je poté namapována na konkrétní barvu a vykreslena jako čtverec do SVG obrázku. 
+V tomto kontextu je SVG využito v podstatě stejně jako rastrový obraz, kdy každý čtverec funguje jako jeden *pixel*. 
+Použití SVG je zde zvoleno podle zadání, přestože princip generování připomíná spíše rastrovou reprezentaci obrazu.
+
+Tento postup zaručuje, že playlisty se stejným názvem mají vždy shodné cover arty, protože generování je deterministické a závisí přímo na názvu playlistu.
+
+### Vizualizér
+Vizualizér funguje na principu audio analyzéru, který je připojen k přehrávanému zvuku. 
+Z analyzéru jsou získávány frekvence zvuku, které jsou následně rozděleny do *x* skupin, přičemž *x* odpovídá počtu barů vizualizéru. 
+Z každé skupiny frekvencí se vypočítá průměrná hodnota, která určuje výšku vykresleného baru.
+
+Protože je vizualizér přímo připojen na audio, ztlumením hlasitosti se výška vykreslených barů sníží, jelikož frekvence jsou méně intenzivní.
+
+Výsledný vizualizér se skládá ze čtyř totožných vizualizérů, které jsou horizontálně a vertikálně překlopeny, aby byl vizualizér vycentrován.
+
+Rychlost aktualizace vizualizéru závisí na výkonu klientského počítače, protože je použita funkce requestAnimationFrame. 
+Počet vykreslených barů se automaticky přizpůsobuje šířce displeje. 
+
+Zaroveň je implementována smoothing konstanta, která zajišťuje, že animace probíhají plynule a nejsou příliš rychlé či skokové.
+
+### Offline režim
+Jelikož aplikace není závislá na žádné externí službě, je možné ji využívat plně offline. Pro tento účel je využit *vite-plugin-pwa*, který vytváří service workera, 
+jenž nacachuje všechny potřebné soubory aplikace. Díky tomu je možné spustit a používat aplikaci i bez připojení k internetu, 
+přičemž veškerá funkcionalita zůstává dostupná.
+
+Plugin by teoreticky umožnil také vytvoření plnohodnotné PWA s pokročilejšími možnostmi, avšak tato funkcionalita nebyla v aplikaci testována.
+
+### Optimalizace UI
+Aplikace je optimalizována pro různá zařízení pomocí CSS media query selektorů, což zajišťuje správné zobrazení a funkčnost jak na mobilních telefonech, tak na větších displejích.
+
+Z důvodu omezené velikosti obrazovky a přehlednosti uživatelského rozhraní však na menších zařízeních není zobrazován vizualizér.
+
+### Informační zprávy
+Uživatel je o stavu aplikace a výsledku akcí informován pomocí *toast* zpráv, které na něj vyskakují.
