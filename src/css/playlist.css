@@ -93,7 +93,7 @@ table.tracks-list {
     }
 
     tbody tr:nth-child(even) {
-        background-color: var(--PRIMARY_COLOR);
+        background-color: var(--SECONDARY_COLOR);
     }
 }
 
