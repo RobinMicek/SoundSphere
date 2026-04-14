@@ -11,6 +11,10 @@ header {
         margin: 0;
 
         filter: drop-shadow(0 0.5rem 1rem var(--SHADOW_COLOR));
+   }
+
+    img:hover {
+        animation: spinnning 3s ease-in-out;
     }
 
     nav {
@@ -30,4 +34,9 @@ header {
     header img {
         width: 50vw;
     }
+}
+
+@keyframes spinnning {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
 }
